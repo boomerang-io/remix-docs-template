@@ -23,7 +23,7 @@ A special call out to the [Remix website](https://github.com/remix-run/remix-web
 
 ## Support
 
-- Join the discussion on the Boomerang-IO Slack
+- Join the discussion on the [Boomerang Slack](https://join.slack.com/t/boomerang-io/shared_invite/zt-pxo2yw2o-c3~6YvWkKNrKIwhIBAKhaw)
 
 ## Setup
 
