@@ -25,16 +25,19 @@ import {
   validateParams,
   getLatestVersion,
   getLatestVersionHeads,
-} from "~/utils/gh-docs";
-import type { Doc } from "~/utils/gh-docs";
+} from "~/utils/github";
+import type { Doc } from "~/utils/github";
 import { octokit } from "~/utils/github.server";
 import { env } from "~/utils/env.server";
 import { CACHE_CONTROL } from "~/utils/http.server";
+import { VersionWarningMessage } from "~/components/version-warning-message";
+import { siteConfig } from "~/config/site";
+import { appConfig } from "~/config/app";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   let { lang = "en", ref = "main", "*": splat } = params;
 
-  let branchesInMenu = ["main", "dev"];
+  let branchesInMenu = appConfig.versions.branches;
   let [tags, branches] = await Promise.all([
     getRepoTags({ octokit, releasePackage: env.RELEASE_PACKAGE }),
     getRepoBranches({ octokit }),
@@ -43,10 +46,10 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
     throw new Response("Cannot reach GitHub", { status: 503 });
   }
 
-  if (process.env.NODE_ENV === "development") {
-    branches.push("local");
-    branchesInMenu.push("local");
-  }
+  // if (process.env.NODE_ENV === "development") {
+  //   branches.push("local");
+  //   branchesInMenu.push("local");
+  // }
 
   let betterUrl = validateParams(tags, branches, { lang, ref, "*": splat });
   if (betterUrl) throw redirect("/docs/" + betterUrl);
@@ -103,7 +106,7 @@ export default function DocsLayout() {
     <div className="[--header-height:theme(spacing.16)] [--nav-width:theme(spacing.72)]">
       <div className="sticky top-0 z-20">
         <Header />
-        <VersionWarningMobile />
+        <VersionWarning />
         <NavMenuMobile />
       </div>
       <div
@@ -148,18 +151,15 @@ function Footer() {
       <div className="sm:flex sm:items-center sm:gap-2 lg:gap-4">
         <div>
           &copy;{" "}
-          <a className="hover:underline" href="https://remix.run">
-            Shopify, Inc.
+          <a className="hover:underline" href={siteConfig.url}>
+            {siteConfig.project}.
           </a>
         </div>
         <div className="hidden sm:block">•</div>
         <div>
           Docs and examples licensed under{" "}
-          <a
-            className="hover:underline"
-            href="https://opensource.org/licenses/MIT"
-          >
-            MIT
+          <a className="hover:underline" href={siteConfig.license.url}>
+            {siteConfig.license.name}
           </a>
         </div>
       </div>
@@ -196,21 +196,17 @@ function Header() {
               <img
                 alt=""
                 loading="lazy"
-                // width="1000"
-                // height="562"
                 decoding="async"
                 data-nimg="1"
-                className="!m-0 w-full h-full object-cover"
-                src="/logo-boomerang.png"
+                className="!m-0 w-full h-9 object-cover"
+                src="/boomerang-logo.svg"
               />
             </Link>
             <div className="flex items-center gap-2">
               <VersionSelect />
-              <ColorSchemeToggle />
               <HeaderMenuMobile className="md:hidden" />
             </div>
           </div>
-          <VersionWarningDesktop />
           <div className="flex gap-8">
             <div className="hidden items-center md:flex">
               <HeaderMenuLink to="/docs">Docs</HeaderMenuLink>
@@ -267,7 +263,7 @@ function VersionSelect() {
       </summary>
       <DetailsPopup>
         <div className="flex flex-col gap-px">
-          <VersionsLabel label="Branches" />
+          {branches.length > 0 && <VersionsLabel label="Branches" />}
           {branches.map((branch) => {
             return (
               <VersionLink
@@ -280,7 +276,6 @@ function VersionSelect() {
               </VersionLink>
             );
           })}
-
           <VersionsLabel label="Versions" />
           {versions.map((version) => (
             <VersionLink
@@ -339,88 +334,10 @@ function VersionLink({
   );
 }
 
-function ColorSchemeToggle() {
-  let location = useLocation();
-
-  // This is the same default, hover, focus style as the VersionSelect
-  let baseClasses =
-    "bg-gray-100 hover:bg-gray-200 [[open]>&]:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 dark:[[open]>&]:bg-gray-700";
-
-  return (
-    <DetailsMenu className="relative cursor-pointer">
-      <summary
-        className={cx(
-          baseClasses,
-          "_no-triangle grid h-10 w-10 place-items-center rounded-full"
-        )}
-      >
-        <svg className="hidden h-5 w-5 dark:inline">
-          <use href={`${iconsHref}#moon`} />
-        </svg>
-        <svg className="h-5 w-5 dark:hidden">
-          <use href={`${iconsHref}#sun`} />
-        </svg>
-      </summary>
-      <DetailsPopup>
-        <Form
-          preventScrollReset
-          replace
-          action="/_actions/color-scheme"
-          method="post"
-          className="flex flex-col gap-px"
-        >
-          <input
-            type="hidden"
-            name="returnTo"
-            value={location.pathname + location.search}
-          />
-          <ColorSchemeButton
-            svgId="sun"
-            label="Light"
-            value="light"
-            name="colorScheme"
-          />
-          <ColorSchemeButton
-            svgId="moon"
-            label="Dark"
-            value="dark"
-            name="colorScheme"
-          />
-          <ColorSchemeButton
-            svgId="monitor"
-            label="System"
-            value="system"
-            name="colorScheme"
-          />
-        </Form>
-      </DetailsPopup>
-    </DetailsMenu>
-  );
-}
-
-let ColorSchemeButton = React.forwardRef<
-  HTMLButtonElement,
-  React.ComponentPropsWithRef<"button"> & { svgId: string; label: string }
->(({ svgId, label, ...props }, forwardedRef) => {
-  return (
-    <button
-      {...props}
-      ref={forwardedRef}
-      className={cx(
-        "flex w-full items-center gap-2 rounded-sm px-2 py-2 text-sm transition-colors duration-100 bg-blue-200 text-black dark:bg-blue-800 dark:text-gray-100"
-      )}
-    >
-      <svg className="h-4 w-4">
-        <use href={`${iconsHref}#${svgId}`} />
-      </svg>{" "}
-      {label}
-    </button>
-  );
-});
-
-function VersionWarningMobile() {
+function VersionWarning() {
   let { isLatest, branches, currentGitHubRef } = useLoaderData<typeof loader>();
   if (isLatest) return null;
+  let { "*": splat } = useParams();
 
   return (
     <div className="text-center lg:hidden">
@@ -428,53 +345,10 @@ function VersionWarningMobile() {
         <VersionWarningMessage
           branches={branches}
           currentGitHubRef={currentGitHubRef}
+          splat={splat}
         />
       </div>
     </div>
-  );
-}
-
-function VersionWarningDesktop() {
-  let { isLatest, branches, currentGitHubRef } = useLoaderData<typeof loader>();
-  if (isLatest) return null;
-
-  return (
-    <div className="hidden lg:block">
-      <div className="animate-[bounce_500ms_2.5] bg-blue-brand p-2 text-xs text-white">
-        <VersionWarningMessage
-          branches={branches}
-          currentGitHubRef={currentGitHubRef}
-        />
-      </div>
-    </div>
-  );
-}
-
-function VersionWarningMessage({
-  branches,
-  currentGitHubRef,
-}: {
-  branches: string[];
-  currentGitHubRef: string;
-}) {
-  let { "*": splat } = useParams();
-
-  // Don't want to show release-next in the menu, but we do want to show
-  // the branch-warning
-  let warning = [...branches, "release-next"].includes(currentGitHubRef)
-    ? `Viewing docs for ${currentGitHubRef} branch, not the latest release`
-    : `Viewing docs for an older release`;
-
-  return (
-    <>
-      {warning}.{" "}
-      <Link
-        to={splat ? `/docs/en/main/${splat}` : "/docs/en/main"}
-        className="underline"
-      >
-        View latest
-      </Link>
-    </>
   );
 }
 

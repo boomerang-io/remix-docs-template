@@ -16,8 +16,8 @@ import type {
 import type { MetaFunction } from "@remix-run/react";
 import { CACHE_CONTROL, handleRedirects } from "~/utils/http.server";
 import invariant from "tiny-invariant";
-import type { Doc } from "~/utils/gh-docs";
-import { getRepoDoc } from "~/utils/gh-docs";
+import type { Doc } from "~/utils/github";
+import { getRepoDoc } from "~/utils/github";
 import iconsHref from "~/icons.svg";
 import { useDelegatedReactRouterLinks } from "~/components/delegate-links";
 import type { loader as docsLayoutLoader } from "~/routes/docs.$lang.$ref";

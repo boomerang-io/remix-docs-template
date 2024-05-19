@@ -3,7 +3,7 @@ import * as React from "react";
 import { json } from "@remix-run/node";
 import { handleRedirects } from "~/utils/http.server";
 import invariant from "tiny-invariant";
-import { getRepoImage } from "~/utils/gh-docs";
+import { getRepoImage } from "~/utils/github";
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   invariant(params.ref, "expected `ref` params");

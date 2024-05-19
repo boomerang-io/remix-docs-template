@@ -2,6 +2,7 @@ import { LRUCache } from "lru-cache";
 import parseLinkHeader from "parse-link-header";
 import semver from "semver";
 import type { Octokit } from "octokit";
+import { appConfig } from "~/config/app";
 
 type CacheContext = { octokit: Octokit; releasePackage: string };
 declare global {
@@ -30,12 +31,15 @@ export function getLatestVersion(tags: string[]) {
  * Returns the latest version of each major version
  */
 export function getLatestVersionHeads(tags: string[]) {
-  let heads = new Map<number /*major*/, string /*head*/>();
+  let heads = new Map<string, string>();
   for (let tag of tags) {
-    let major = semver.major(tag);
-    let head = heads.get(major);
+    let prefix = semver.major(tag);
+    if (appConfig.versions.includeMinor) {
+      prefix += "." + semver.minor(tag);
+    }
+    let head = heads.get(prefix);
     if (!head || semver.gt(tag, head)) {
-      heads.set(major, tag);
+      heads.set(prefix, tag);
     }
   }
   return Array.from(heads.values()).sort(semver.compare).reverse();
@@ -84,27 +88,25 @@ export async function getAllReleases(
     throw new Error(`Failed to fetch releases: ${data}`);
   }
 
+  //Set regex to semver or prefixed semver
+  let regex = new RegExp(`^${appConfig.versions.prefix}[0-9]`);
+
   releases.push(
     ...data
       .filter((release) => {
         return Boolean(
           // Check the release name
-          /^v[0-9]/.test(release?.name || "") ||
-            // ideally all we care about is release.name, but we have some old
-            // releases that don't have that set, so we check the tag name too
-            // After changesets, we look for remix@<VERSION>
-            release.tag_name.split("@")[0] === primaryPackage ||
-            // pre-changesets, tag_name started with "v"
-            /^v[0-9]/.test(release.tag_name),
+          // ideally all we care about is release.name, but if not set,
+          // we check the tag name too
+          regex.test(release?.name || "") || regex.test(release.tag_name),
         );
       })
       .map((release) => {
         return (
           // pre-changesets, tag_name started with "v"
-          /^v[0-9]/.test(release.tag_name)
+          regex.test(release.tag_name)
             ? release.tag_name
-            : // with changesets its like remix@<VERSION>
-              release.tag_name.split("@")[1] || "unknown"
+            : "unknown"
         );
       }),
   );
