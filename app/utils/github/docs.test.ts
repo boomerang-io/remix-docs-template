@@ -24,7 +24,7 @@ describe("getMenuFromStream", () => {
 });
 
 async function getFixtureStream(): Promise<NodeJS.ReadableStream> {
-  let fixturePath = path.join(__dirname, "__fixture__");
+  let fixturePath = path.join(__dirname, "__test__");
   let writePath = path.join(fixturePath, "tar.tgz");
   await tar.c({ gzip: true, file: writePath }, [fixturePath]);
   return fs.createReadStream(writePath);
