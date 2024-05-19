@@ -57,7 +57,7 @@ export function getRepoImage(ref: string, slug: string) {
 }
 
 function fixupRefName(ref: string) {
-  return ["dev", "main", "release-next", "local"].includes(ref) ||
+  return ["dev", "main", "local"].includes(ref) ||
     // when we switched to changesets the `v` went away, so we use that as a way
     // to know if we need to add hte `remix@` prefix for interacting w/
     // github.

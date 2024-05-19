@@ -46,10 +46,10 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
     throw new Response("Cannot reach GitHub", { status: 503 });
   }
 
-  // if (process.env.NODE_ENV === "development") {
-  //   branches.push("local");
-  //   branchesInMenu.push("local");
-  // }
+  if (process.env.NODE_ENV === "development") {
+    branches.push("local");
+    branchesInMenu.push("local");
+  }
 
   let betterUrl = validateParams(tags, branches, { lang, ref, "*": splat });
   if (betterUrl) throw redirect("/docs/" + betterUrl);
@@ -340,8 +340,8 @@ function VersionWarning() {
   let { "*": splat } = useParams();
 
   return (
-    <div className="text-center lg:hidden">
-      <div className="bg-blue-brand p-2 text-xs text-white">
+    <div className="text-center">
+      <div className="p-2 bg-[#0072c3] text-xs text-white">
         <VersionWarningMessage
           branches={branches}
           currentGitHubRef={currentGitHubRef}

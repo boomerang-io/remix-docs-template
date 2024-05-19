@@ -1,7 +1,7 @@
 export const appConfig = {
     versions: {
-        // branches: ["main", "dev"],
-        branches: [],
+        branches: ["main"],
+        // branches: [],
         prefix: "v",
         includeMinor: true,
     }
