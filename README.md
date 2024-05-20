@@ -40,6 +40,36 @@ There is a file called \_redirects where you can put in paths for your documenta
 
 ### Content
 
+The content is pulled from a GitHub repository (or locally in development). The repository is expected to have markdown files and associated images. Images can be located relative or anywhere, as long as they are within the same 'pathToRepo' folder(s) as the markdown files.
+
+The markdown files can contain frontmatter as follows
+
+```jsx
+---
+title: A wonderful title
+description: A detailed description
+order: 1
+toc: true | false
+hidden: true | false
+---
+```
+
+If the documentation is within a folder, add an index.md file to the folder including the `title` and `order` frontmatter. This will then be used in the navigation.
+
+### Configuration
+
+To provide as much flexibility as possible, inside the `/app/config` directory are multiple configuration files that control how this template functions. Read the individual configuration files for greater detail to the individual options.
+
+- `doc.ts` - Controls the documentation and versioning integration.
+- `nav.ts` - Controls the navigation and sidebar.
+- `site.ts` - Controls general information displayed throughout the template such as title and description.
+
+Additionally, there is a `.env` file that controls the environment variables for the template. This includes
+
+- `GITHUB_TOKEN` - A token to increase the rate limiting from 60/hr to 1000/hr
+- `SOURCE_REPO` - GitHub repo to pull docs from i.e. `boomerang-io/docs`
+- `LOCAL_REPO_RELATIVE_PATH` - For development, reading the docs from a local repo i.e. `../content`
+
 ## Setup
 
 ## Development

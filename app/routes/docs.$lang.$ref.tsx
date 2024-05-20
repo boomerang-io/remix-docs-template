@@ -32,12 +32,12 @@ import { env } from "~/utils/env.server";
 import { CACHE_CONTROL } from "~/utils/http.server";
 import { VersionWarningMessage } from "~/components/version-warning-message";
 import { siteConfig } from "~/config/site";
-import { appConfig } from "~/config/app";
+import { docConfig } from "~/config/doc";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   let { lang = "en", ref = "main", "*": splat } = params;
 
-  let branchesInMenu = appConfig.versions.branches;
+  let branchesInMenu = docConfig.versions.branches;
   let [tags, branches] = await Promise.all([
     //TODO: remove releasePackage and use config
     getRepoTags({ octokit, releasePackage: env.RELEASE_PACKAGE }),

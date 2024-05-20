@@ -23,7 +23,7 @@ import { useDelegatedReactRouterLinks } from "~/components/delegate-links";
 import type { loader as docsLayoutLoader } from "~/routes/docs.$lang.$ref";
 import type { loader as rootLoader } from "~/root";
 import { getMeta } from "~/utils/meta";
-import { appConfig } from "~/config/app";
+import { docConfig } from "~/config/doc";
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   let url = new URL(request.url);
@@ -39,7 +39,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   try {
     let slug = params["*"]?.endsWith("/changelog")
       ? "CHANGELOG"
-      : `${appConfig.versions.path}/${params["*"] || "index"}`;
+      : `${docConfig.pathToDocs}/${params["*"] || "index"}`;
     let doc = await getRepoDoc(params.ref, slug);
     if (!doc) throw null;
     return json(

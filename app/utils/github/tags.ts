@@ -2,7 +2,7 @@ import { LRUCache } from "lru-cache";
 import parseLinkHeader from "parse-link-header";
 import semver from "semver";
 import type { Octokit } from "octokit";
-import { appConfig } from "~/config/app";
+import { docConfig } from "~/config/doc";
 
 type CacheContext = { octokit: Octokit; releasePackage: string };
 declare global {
@@ -34,7 +34,7 @@ export function getLatestVersionHeads(tags: string[]) {
   let heads = new Map<string, string>();
   for (let tag of tags) {
     let prefix = semver.major(tag);
-    if (appConfig.versions.includeMinor) {
+    if (docConfig.versions.includeMinor) {
       prefix += "." + semver.minor(tag);
     }
     let head = heads.get(prefix);
@@ -89,7 +89,7 @@ export async function getAllReleases(
   }
 
   //Set regex to semver or prefixed semver
-  let regex = new RegExp(`^${appConfig.versions.prefix}[0-9]`);
+  let regex = new RegExp(`^${docConfig.versions.prefix}[0-9]`);
 
   releases.push(
     ...data

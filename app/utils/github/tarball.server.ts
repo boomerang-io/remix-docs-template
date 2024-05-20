@@ -1,8 +1,8 @@
 import gunzip from "gunzip-maybe";
 import tar from "tar-stream";
-import { appConfig } from "~/config/app";
+import { docConfig } from "~/config/doc";
 
-const REGULAR_EXPRESSION = `${appConfig.versions.path}\/(.+)\.md$`;
+const REGULAR_EXPRESSION = `${docConfig.pathToDocs}\/(.+)\.md$`;
 
 type ProcessFile = ({
   filename,
