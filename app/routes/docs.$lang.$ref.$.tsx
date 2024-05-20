@@ -23,6 +23,7 @@ import { useDelegatedReactRouterLinks } from "~/components/delegate-links";
 import type { loader as docsLayoutLoader } from "~/routes/docs.$lang.$ref";
 import type { loader as rootLoader } from "~/root";
 import { getMeta } from "~/utils/meta";
+import { appConfig } from "~/config/app";
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   let url = new URL(request.url);
@@ -38,7 +39,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   try {
     let slug = params["*"]?.endsWith("/changelog")
       ? "CHANGELOG"
-      : `docs/${params["*"] || "index"}`;
+      : `${appConfig.versions.path}/${params["*"] || "index"}`;
     let doc = await getRepoDoc(params.ref, slug);
     if (!doc) throw null;
     return json(
@@ -149,8 +150,12 @@ export default function DocPage() {
       ) : (
         <div className="hidden xl:order-1 xl:block xl:w-56 xl:flex-shrink-0" />
       )}
-      <div className="min-w-0 pt-12 xl:flex-grow xl:pt-20">
-        <div ref={ref} className="markdown w-full max-w-3xl pb-[33vh]">
+      <div className="min-w-0 xl:flex-grow">
+        <div className="hidden lg:pt-8 lg:flex">Last modified:</div>
+        <div
+          ref={ref}
+          className="markdown w-full max-w-3xl pt-8 xl:pt-12 pb-[33vh]"
+        >
           <div
             className="md-prose"
             dangerouslySetInnerHTML={{ __html: doc.html }}

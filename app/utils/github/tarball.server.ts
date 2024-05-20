@@ -1,5 +1,8 @@
 import gunzip from "gunzip-maybe";
 import tar from "tar-stream";
+import { appConfig } from "~/config/app";
+
+const REGULAR_EXPRESSION = `${appConfig.versions.path}\/(.+)\.md$`;
 
 type ProcessFile = ({
   filename,
@@ -11,7 +14,7 @@ type ProcessFile = ({
 
 export function createTarFileProcessor(
   stream: NodeJS.ReadableStream,
-  pattern: RegExp = /docs\/(.+)\.md$/,
+  pattern: RegExp = new RegExp(REGULAR_EXPRESSION),
 ) {
   return (processFile: ProcessFile) =>
     processFilesFromRepoTarball(stream, pattern, processFile);
@@ -19,7 +22,7 @@ export function createTarFileProcessor(
 
 async function processFilesFromRepoTarball(
   stream: NodeJS.ReadableStream,
-  pattern: RegExp = /docs\/(.+)\.md$/,
+  pattern: RegExp = new RegExp(REGULAR_EXPRESSION),
   processFile: ProcessFile,
 ): Promise<void> {
   return new Promise((accept, reject) => {
@@ -30,8 +33,10 @@ async function processFilesFromRepoTarball(
         // Make sure the file matches the ones we want to process
         let isMatch = header.type === "file" && pattern.test(header.name);
         if (isMatch) {
-          // remove "react-router-main" and "remix-v1.0.0" from the full name
-          // that's something like "remix-main/docs/index.md"
+          console.log("Processing file", header.name)
+          // header.name will include the name of the <repo>-<ref:branch/tag>
+          // remove "docs-main" or "docs-v1.0.0" from the full name
+          // that's something like "docs-main/docs/index.md"
           let filename = removeRepoRefName(header.name);
           // buffer the contents of this file stream so we can send the entire
           // string to be processed by the caller

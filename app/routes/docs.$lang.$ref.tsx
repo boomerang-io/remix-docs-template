@@ -39,6 +39,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 
   let branchesInMenu = appConfig.versions.branches;
   let [tags, branches] = await Promise.all([
+    //TODO: remove releasePackage and use config
     getRepoTags({ octokit, releasePackage: env.RELEASE_PACKAGE }),
     getRepoBranches({ octokit }),
   ]);
@@ -68,6 +69,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
     currentGitHubRef: ref,
     lang,
     isLatest,
+    repoUrl: "https://github.com/" + env.SOURCE_REPO,
   });
 };
 
@@ -146,13 +148,14 @@ export default function DocsLayout() {
 }
 
 function Footer() {
+  let { repoUrl } = useLoaderData<typeof loader>();
   return (
     <div className="flex justify-between gap-4 border-t border-t-gray-50 py-4 text-sm text-gray-400 dark:border-gray-800">
       <div className="sm:flex sm:items-center sm:gap-2 lg:gap-4">
         <div>
           &copy;{" "}
           <a className="hover:underline" href={siteConfig.url}>
-            {siteConfig.project}.
+            {siteConfig.project}
           </a>
         </div>
         <div className="hidden sm:block">•</div>
@@ -162,9 +165,10 @@ function Footer() {
             {siteConfig.license.name}
           </a>
         </div>
-      </div>
-      <div>
-        <EditLink />
+        <div className="hidden sm:block">•</div>
+        <div>
+          <EditLink repoUrl={repoUrl} />
+        </div>
       </div>
     </div>
   );
@@ -680,7 +684,7 @@ function MenuLink({ to, children }: { to: string; children: React.ReactNode }) {
   );
 }
 
-function EditLink() {
+function EditLink({ repoUrl }: { repoUrl: string }) {
   let doc = useDoc();
   let params = useParams();
   let isEditableRef = params.ref === "main" || params.ref === "dev";
@@ -689,13 +693,12 @@ function EditLink() {
     return null;
   }
 
-  let repoUrl = "https://github.com/remix-run/remix";
   // TODO: deal with translations when we add them with params.lang
   let editUrl = `${repoUrl}/edit/${params.ref}/${doc.slug}.md`;
 
   return (
     <a className="flex items-center gap-1 hover:underline" href={editUrl}>
-      Edit
+      Edit on GitHub
       <svg aria-hidden className="h-4 w-4">
         <use href={`${iconsHref}#edit`} />
       </svg>

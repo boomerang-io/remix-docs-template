@@ -4,11 +4,11 @@ A Remix starter template for running a markdown documentation site pulling from 
 
 ## Features
 
-- Remote fetching of Markdown and Images from GitHub
+- Remote fetching of markdown and images from GitHub
 - Version selector
-- Docs
-- Blogs _coming soon_
 - Customisable components
+- Configuration
+- Cache support
 
 ## Building Blocks
 
@@ -17,9 +17,12 @@ A Remix starter template for running a markdown documentation site pulling from 
 - [Tailwind CSS](https://tailwindcss.com/) for styling
 - [Shadcn](https://ui.shadcn.com/) for the accessible, customisable, open-source components.
 
-## Acknowledgement
+## 🖤 Acknowledgement
 
-A special call out to the [Remix website](https://github.com/remix-run/remix-website) and [Kent C Dodds](https://github.com/kentcdodds/kentcdodds.com) for the inspiration and guidance and code snippets that make up this template.
+A special call out to the following for the inspiration and guidance and code that make up this template. Without them, this template would not have been created.
+
+- [Remix website](https://github.com/remix-run/remix-website)
+- [Kent C Dodds](https://github.com/kentcdodds/kentcdodds.com)
 
 ## Support
 
@@ -34,6 +37,8 @@ The docs path is based on a context of `/docs/<language>/<branch>/<path>`. The l
 ### Redirects
 
 There is a file called \_redirects where you can put in paths for your documentation as things change.
+
+### Content
 
 ## Setup
 

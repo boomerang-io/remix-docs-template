@@ -6,6 +6,7 @@ import { getRepoTarballStream } from "./repo-tarball";
 import { createTarFileProcessor } from "./tarball.server";
 import { load as $ } from "cheerio";
 import { env } from "~/utils/env.server";
+import { appConfig } from "~/config/app";
 
 interface MenuDocAttributes {
   title: string;
@@ -245,7 +246,7 @@ function makeSlug(docName: string): string {
   // way to control the basename of files when we make the local tarball but I
   // dunno how to do that right now.
   return docName
-    .replace(/^(.+\/)?docs\//, "")
+    .replace(new RegExp(`^(.+\/)?${appConfig.versions.path}\/`), "")
     .replace(/\.md$/, "")
     .replace(/index$/, "")
     .replace(/\/$/, "");

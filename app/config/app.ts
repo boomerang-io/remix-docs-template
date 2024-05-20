@@ -4,6 +4,7 @@ export const appConfig = {
         // branches: [],
         prefix: "v",
         includeMinor: true,
+        path: "bob"
     }
   }
   
