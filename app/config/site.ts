@@ -5,6 +5,7 @@ export const siteConfig = {
   description:
     "A collection of open source projects for CI/CD and automation",
   links: {
+    github: "https://github.com/boomerang-io/remix-docs-template"
   },
   license: {
     name: "Apache 2.0",

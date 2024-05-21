@@ -10,20 +10,20 @@ interface NavConfig {
 export const navConfig: NavConfig = {
   mainNav: [
     {
-      title: "Features",
-      href: "/features",
+      title: "Boomerang",
+      href: "http://useboomerang.io",
     },
     {
-      title: "Solutions",
-      href: "/solutions",
+      title: "Remix",
+      href: "https://remix.run",
     },
     {
-      title: "Documentation",
-      href: "/docs",
+      title: "Kent C. Dodds",
+      href: "https://kentcdodds.com/",
     },
     {
-      title: "Pricing",
-      href: "/pricing",
+      title: "shadcn/ui",
+      href: "https://ui.shadcn.com/",
     },
   ],
 }

@@ -15,6 +15,21 @@ import { isProductionHost, removeTrailingSlashes } from "./utils/http.server";
 import { canUseDOM } from "./utils/ui-utils";
 import { cn } from "./utils/theme";
 
+export function links() {
+  return [
+    {
+      rel: "prefetch",
+      as: "image",
+      href: "/boomerang-logo.svg",
+    },
+    {
+      rel: "icon",
+      type: "image/png",
+      href: "/boomerang-icon.png",
+    },
+  ];
+}
+
 export async function loader({ request }: LoaderFunctionArgs) {
   removeTrailingSlashes(request);
 
@@ -42,7 +57,7 @@ interface LayoutProps {
   children: React.ReactNode;
 }
 
-export function Layout({ children, title, noIndex, isDev }: LayoutProps) {
+function Layout({ children, title, noIndex, isDev }: LayoutProps) {
   let matches = useMatches();
   let isDocsPage = !!matches.find((match) =>
     match.id.startsWith("routes/docs")
@@ -74,9 +89,12 @@ export function Layout({ children, title, noIndex, isDev }: LayoutProps) {
 }
 
 export default function App() {
-  let matches = useMatches();
   let { noIndex } = useLoaderData<typeof loader>();
-  return <Outlet />;
+  return (
+    <Layout noIndex={noIndex}>
+      <Outlet />
+    </Layout>
+  );
 }
 
 export function ErrorBoundary() {
@@ -87,7 +105,7 @@ export function ErrorBoundary() {
 
   if (isRouteErrorResponse(error)) {
     return (
-      <Layout noIndex title={error.statusText} forceDark darkBg="bg-blue-brand">
+      <Layout noIndex title={error.statusText}>
         <div className="flex flex-1 flex-col justify-center text-white">
           <div className="text-center leading-none">
             <h1 className="font-mono text-[25vw]">{error.status}</h1>

@@ -75,7 +75,7 @@ export function removeTrailingSlashes(request: Request) {
 }
 
 export function isProductionHost(request: Request) {
-  return "remix.run" === request.headers.get("host");
+  return !request.headers.get("host")?.startsWith("localhost");
 }
 
 function getValidRedirectCode(code: string | number | undefined) {
