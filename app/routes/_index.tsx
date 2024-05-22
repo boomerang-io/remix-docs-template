@@ -40,7 +40,7 @@ export default function Index() {
                   </Link>
                   <Link
                     className="inline-flex h-9 items-center justify-center rounded-md border border-gray-200 bg-white px-4 py-2 text-sm font-medium shadow-sm transition-colors hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50 dark:border-gray-800 dark:border-gray-800 dark:bg-gray-950 dark:hover:bg-gray-800 dark:hover:text-gray-50 dark:focus-visible:ring-gray-300"
-                    to="https://useboomerang.io/docs"
+                    to="/docs"
                   >
                     View Example
                   </Link>
@@ -94,10 +94,12 @@ export default function Index() {
               </div>
               <div className="flex flex-col items-start space-y-2">
                 <ShieldCheckIcon className="text-primary w-6 h-6" />
-                <h3 className="text-lg font-semibold">Secure</h3>
+                <h3 className="text-lg font-semibold">
+                  Language Support <i>future</i>
+                </h3>
                 <p className="text-sm text-gray-600">
-                  "I trust their security measures to protect our sensitive
-                  data." – Sam R.
+                  The routes have the ability to switch languages.
+                  Implementation has not yet been figured out.
                 </p>
               </div>
             </div>
@@ -105,7 +107,13 @@ export default function Index() {
         </main>
         <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t">
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            © 2024 Documentation Site. All rights reserved.
+            <div>
+              &copy; 2024{" "}
+              <a className="hover:underline" href={siteConfig.url}>
+                {siteConfig.project}
+              </a>
+              . All rights reserved.
+            </div>
           </p>
         </footer>
       </div>

@@ -26,6 +26,16 @@ import {
   getLatestVersion,
   getLatestVersionHeads,
 } from "~/utils/github";
+import {
+  SelectValue,
+  SelectTrigger,
+  SelectItem,
+  SelectContent,
+  SelectLabel,
+  SelectSeparator,
+  SelectGroup,
+  Select,
+} from "~/components/ui/select";
 import type { Doc } from "~/utils/github";
 import { octokit } from "~/utils/github.server";
 import { env } from "~/utils/env.server";
@@ -33,6 +43,7 @@ import { CACHE_CONTROL } from "~/utils/http.server";
 import { VersionWarningMessage } from "~/components/version-warning-message";
 import { siteConfig } from "~/config/site";
 import { docConfig } from "~/config/doc";
+import { Header } from "~/components/header";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   let { lang = "en", ref = "main", "*": splat } = params;
@@ -104,10 +115,12 @@ export default function DocsLayout() {
   let docsContainer = React.useRef<HTMLDivElement>(null);
   useCodeBlockCopyButton(docsContainer);
 
+  let versionData = useLoaderData<typeof loader>();
+
   return (
     <div className="[--header-height:theme(spacing.16)] [--nav-width:theme(spacing.72)]">
       <div className="sticky top-0 z-20">
-        <Header />
+        <Header versionData={versionData} />
         <VersionWarning />
         <NavMenuMobile />
       </div>
@@ -153,10 +166,11 @@ function Footer() {
     <div className="flex justify-between gap-4 border-t border-t-gray-50 py-4 text-sm text-gray-400 dark:border-gray-800">
       <div className="sm:flex sm:items-center sm:gap-2 lg:gap-4">
         <div>
-          &copy;{" "}
+          &copy; 2024{" "}
           <a className="hover:underline" href={siteConfig.url}>
             {siteConfig.project}
           </a>
+          . All rights reserved.
         </div>
         <div className="hidden sm:block">•</div>
         <div>
@@ -174,70 +188,59 @@ function Footer() {
   );
 }
 
-function Header() {
+function VersionSelect2() {
+  let {
+    versions,
+    latestVersion,
+    releaseBranch,
+    branches,
+    currentGitHubRef,
+    lang,
+  } = useLoaderData<typeof loader>();
   let navigate = useNavigate();
 
   return (
-    <div
-      className={cx(
-        "relative border-b border-gray-100/50 bg-white text-black dark:border-gray-800 dark:bg-gray-900 dark:text-gray-100",
-        // This hides some of the underlying text when the user scrolls to the
-        // bottom which results in the overscroll bounce
-        "before:absolute before:bottom-0 before:left-0 before:hidden before:h-[500%] before:w-full before:bg-inherit lg:before:block"
-      )}
-    >
-      <InnerContainer>
-        <div className="relative z-20 flex h-[--header-height] w-full items-center justify-between py-3">
-          <div className="flex w-full items-center justify-between gap-4 sm:gap-8 md:w-auto">
-            <Link
-              className="flex"
-              onContextMenu={(event) => {
-                event.preventDefault();
-                navigate("/brand");
-              }}
-              to="/"
-            >
-              <img
-                alt=""
-                loading="lazy"
-                decoding="async"
-                data-nimg="1"
-                className="!m-0 w-full h-9 object-cover"
-                src="/boomerang-logo.svg"
-              />
-            </Link>
-            <div className="flex items-center gap-2">
-              <VersionSelect />
-              <HeaderMenuMobile className="md:hidden" />
-            </div>
-          </div>
-          <div className="flex gap-8">
-            <div className="hidden items-center md:flex">
-              <HeaderMenuLink to="/docs">Docs</HeaderMenuLink>
-              <HeaderMenuLink to="/blog">Blog</HeaderMenuLink>
-              <HeaderMenuLink to="/showcase">Showcase</HeaderMenuLink>
-              <HeaderMenuLink to="/resources">Resources</HeaderMenuLink>
-            </div>
-            <div className="flex items-center gap-2">
-              <HeaderLink
-                href="https://github.com/remix-run/remix"
-                svgId="github"
-                label="View code on GitHub"
-                title="View code on GitHub"
-                svgSize="24x24"
-              />
-              <HeaderLink
-                href="https://rmx.as/discord"
-                svgId="discord"
-                label="Chat on Discord"
-                title="Chat on Discord"
-                svgSize="24x24"
-              />
-            </div>
-          </div>
-        </div>
-      </InnerContainer>
-    </div>
+    <nav className="flex items-center text-sm">
+      <Select
+        onValueChange={(v) => navigate(`/docs/${lang}/` + v)}
+        defaultValue={currentGitHubRef}
+      >
+        <SelectTrigger
+          id="version"
+          className="w-44 border border-none shadow-none rounded-md h-md py-2 text-md font-medium hover:border-gray-400 focus:outline-none"
+        >
+          <SelectValue placeholder="Select a version" />
+        </SelectTrigger>
+        <SelectContent position="popper" className="w-56 r-md">
+          <SelectGroup>
+            {branches.length > 0 && (
+              <SelectLabel className="text-sm text-muted-foreground font-light">
+                Branches
+              </SelectLabel>
+            )}
+            <SelectSeparator />
+            {branches.map((branch) => (
+              <SelectItem key={branch} value={branch}>
+                {branch}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+          <SelectGroup>
+            {versions.length > 0 && (
+              <SelectLabel className="text-sm text-muted-foreground font-light">
+                Tags
+              </SelectLabel>
+            )}
+            <SelectSeparator />
+            {versions.map((version) => (
+              <SelectItem key={version} value={version}>
+                {version}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+    </nav>
   );
 }
 
@@ -684,21 +687,25 @@ function MenuLink({ to, children }: { to: string; children: React.ReactNode }) {
   );
 }
 
+/*
+ * Generates a link to GitHub in the footer. View for tags. Edit for branches.
+ */
 function EditLink({ repoUrl }: { repoUrl: string }) {
   let doc = useDoc();
   let params = useParams();
   let isEditableRef = params.ref === "main" || params.ref === "dev";
+  let text = "Edit on GitHub";
+  // TODO: deal with translations when we add them with params.lang
+  let url = `${repoUrl}/edit/${params.ref}/${doc.slug}.md`;
 
   if (!doc || !isEditableRef) {
-    return null;
+    text = "View on GitHub";
+    url = `${repoUrl}/blob/${params.ref}/${doc.slug}.md`;
   }
 
-  // TODO: deal with translations when we add them with params.lang
-  let editUrl = `${repoUrl}/edit/${params.ref}/${doc.slug}.md`;
-
   return (
-    <a className="flex items-center gap-1 hover:underline" href={editUrl}>
-      Edit on GitHub
+    <a className="flex items-center gap-1 hover:underline" href={url}>
+      {text}
       <svg aria-hidden className="h-4 w-4">
         <use href={`${iconsHref}#edit`} />
       </svg>

@@ -6,14 +6,40 @@ import { navConfig } from "~/config/nav";
 import { Button } from "~/components/ui/button";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetTrigger } from "~/components/ui/sheet";
+import {
+  SelectValue,
+  SelectTrigger,
+  SelectItem,
+  SelectContent,
+  SelectLabel,
+  SelectSeparator,
+  SelectGroup,
+  Select,
+} from "~/components/ui/select";
 import { cn } from "~/utils/theme";
 
 type HeaderProps = {
-  className: string;
+  className?: string;
+  versionData?: {
+    versions: string[];
+    latestVersion?: string;
+    releaseBranch?: string;
+    branches?: string[];
+    currentGitHubRef?: string;
+    lang?: string;
+  };
 };
 
-export function Header(props: HeaderProps) {
+export function Header({ className, versionData }: HeaderProps) {
   let navigate = useNavigate();
+  let {
+    versions,
+    latestVersion,
+    releaseBranch,
+    branches,
+    currentGitHubRef,
+    lang,
+  } = versionData || {};
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -26,6 +52,49 @@ export function Header(props: HeaderProps) {
               {siteConfig.name}
             </span>
           </Link>
+          {versionData && (
+            <nav className="flex items-center text-sm">
+              <Select
+                onValueChange={(v) => navigate(`/docs/${lang}/` + v)}
+                defaultValue={currentGitHubRef}
+              >
+                <SelectTrigger
+                  id="version"
+                  className="w-40 border border-none shadow-none rounded-md h-md py-2 text-md font-medium hover:border-gray-400 focus:outline-none"
+                >
+                  <SelectValue placeholder="Select a version" />
+                </SelectTrigger>
+                <SelectContent position="popper" className="w-56 r-md">
+                  <SelectGroup>
+                    {branches && branches.length > 0 && (
+                      <SelectLabel className="text-sm text-muted-foreground font-light">
+                        Branches
+                      </SelectLabel>
+                    )}
+                    <SelectSeparator />
+                    {branches?.map((branch) => (
+                      <SelectItem key={branch} value={branch}>
+                        {branch}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                  <SelectGroup>
+                    {versions?.length > 0 && (
+                      <SelectLabel className="text-sm text-muted-foreground font-light">
+                        Tags
+                      </SelectLabel>
+                    )}
+                    <SelectSeparator />
+                    {versions?.map((version) => (
+                      <SelectItem key={version} value={version}>
+                        {version}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </nav>
+          )}
         </div>
         <MainNav />
         <MobileNav />
