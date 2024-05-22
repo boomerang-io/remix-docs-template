@@ -163,7 +163,7 @@ export default function DocsLayout() {
 function Footer() {
   let { repoUrl } = useLoaderData<typeof loader>();
   return (
-    <div className="flex justify-between gap-4 border-t border-t-gray-50 py-4 text-sm text-gray-400 dark:border-gray-800">
+    <div className="place-content-center flex justify-between gap-4 border-t border-t-gray-50 py-4 text-sm text-gray-400 dark:border-gray-800">
       <div className="sm:flex sm:items-center sm:gap-2 lg:gap-4">
         <div>
           &copy; 2024{" "}

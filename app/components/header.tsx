@@ -5,6 +5,7 @@ import { HamburgerMenuIcon } from "@radix-ui/react-icons";
 import { navConfig } from "~/config/nav";
 import { Button } from "~/components/ui/button";
 import { ScrollArea } from "~/components/ui/scroll-area";
+import iconsHref from "~/icons.svg";
 import { Sheet, SheetContent, SheetTrigger } from "~/components/ui/sheet";
 import {
   SelectValue,
@@ -127,6 +128,34 @@ function MainNav() {
             )
         )}
       </nav>
+      <div className="flex items-center gap-1">
+        <Link
+          key="github"
+          to="https://github.com/remix-run/remix"
+          className={cn(
+            "h-10 w-10 place-items-center text-black hover:text-gray-600  md:grid"
+          )}
+        >
+          <span className="sr-only">"View on GitHub"</span>
+          <svg aria-hidden style={{ width: `24px`, height: `24px` }}>
+            <use href={`${iconsHref}#github`} />
+          </svg>
+        </Link>
+        <Link
+          key="slack"
+          to="https://join.slack.com/t/boomerang-io/shared_invite/zt-pxo2yw2o-c3~6YvWkKNrKIwhIBAKhaw"
+          className={cn(
+            "h-10 w-10 place-items-center text-black hover:text-gray-600 md:grid"
+          )}
+        >
+          <span className="sr-only">"Chat on Slack"</span>
+          <img
+            aria-hidden
+            style={{ width: `24px`, height: `24px` }}
+            src="/icons/slack.svg"
+          />
+        </Link>
+      </div>
     </div>
   );
 }
