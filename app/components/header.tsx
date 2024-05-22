@@ -80,7 +80,7 @@ export function Header({ className, versionData }: HeaderProps) {
                     ))}
                   </SelectGroup>
                   <SelectGroup>
-                    {versions?.length > 0 && (
+                    {versions && versions?.length > 0 && (
                       <SelectLabel className="text-sm text-muted-foreground font-light">
                         Tags
                       </SelectLabel>

@@ -188,158 +188,102 @@ function Footer() {
   );
 }
 
-function VersionSelect2() {
-  let {
-    versions,
-    latestVersion,
-    releaseBranch,
-    branches,
-    currentGitHubRef,
-    lang,
-  } = useLoaderData<typeof loader>();
-  let navigate = useNavigate();
+// function VersionSelect() {
+//   let {
+//     versions,
+//     latestVersion,
+//     releaseBranch,
+//     branches,
+//     currentGitHubRef,
+//     lang,
+//   } = useLoaderData<typeof loader>();
 
-  return (
-    <nav className="flex items-center text-sm">
-      <Select
-        onValueChange={(v) => navigate(`/docs/${lang}/` + v)}
-        defaultValue={currentGitHubRef}
-      >
-        <SelectTrigger
-          id="version"
-          className="w-44 border border-none shadow-none rounded-md h-md py-2 text-md font-medium hover:border-gray-400 focus:outline-none"
-        >
-          <SelectValue placeholder="Select a version" />
-        </SelectTrigger>
-        <SelectContent position="popper" className="w-56 r-md">
-          <SelectGroup>
-            {branches.length > 0 && (
-              <SelectLabel className="text-sm text-muted-foreground font-light">
-                Branches
-              </SelectLabel>
-            )}
-            <SelectSeparator />
-            {branches.map((branch) => (
-              <SelectItem key={branch} value={branch}>
-                {branch}
-              </SelectItem>
-            ))}
-          </SelectGroup>
-          <SelectGroup>
-            {versions.length > 0 && (
-              <SelectLabel className="text-sm text-muted-foreground font-light">
-                Tags
-              </SelectLabel>
-            )}
-            <SelectSeparator />
-            {versions.map((version) => (
-              <SelectItem key={version} value={version}>
-                {version}
-              </SelectItem>
-            ))}
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-    </nav>
-  );
-}
+//   // This is the same default, hover, focus style as the ColorScheme trigger
+//   const baseClasses =
+//     "bg-gray-100 hover:bg-gray-200 [[open]>&]:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 dark:[[open]>&]:bg-gray-700";
 
-function VersionSelect() {
-  let {
-    versions,
-    latestVersion,
-    releaseBranch,
-    branches,
-    currentGitHubRef,
-    lang,
-  } = useLoaderData<typeof loader>();
+//   return (
+//     <DetailsMenu className="relative">
+//       <summary
+//         className={`_no-triangle relative flex h-[40px] cursor-pointer list-none items-center justify-center gap-1 rounded-full px-3 text-sm ${baseClasses}`}
+//       >
+//         <div>{currentGitHubRef}</div>
+//         <svg aria-hidden className="-mr-1 h-5 w-5">
+//           <use href={`${iconsHref}#chevrons-up-down`} />
+//         </svg>
+//       </summary>
+//       <DetailsPopup>
+//         <div className="flex flex-col gap-px">
+//           {branches.length > 0 && <VersionsLabel label="Branches" />}
+//           {branches.map((branch) => {
+//             return (
+//               <VersionLink
+//                 key={branch}
+//                 to={
+//                   currentGitHubRef === branch ? "" : `/docs/${lang}/${branch}`
+//                 }
+//               >
+//                 {releaseBranch === branch ? `main (${latestVersion})` : branch}
+//               </VersionLink>
+//             );
+//           })}
+//           <VersionsLabel label="Versions" />
+//           {versions.map((version) => (
+//             <VersionLink
+//               key={version}
+//               to={
+//                 currentGitHubRef === version ? "" : `/docs/${lang}/${version}`
+//               }
+//             >
+//               {version}
+//             </VersionLink>
+//           ))}
+//         </div>
+//       </DetailsPopup>
+//     </DetailsMenu>
+//   );
+// }
 
-  // This is the same default, hover, focus style as the ColorScheme trigger
-  const baseClasses =
-    "bg-gray-100 hover:bg-gray-200 [[open]>&]:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 dark:[[open]>&]:bg-gray-700";
+// function VersionsLabel({ label }: { label: string }) {
+//   return (
+//     <div className="flex w-full items-center gap-2 px-2 py-2 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-300">
+//       {label}
+//     </div>
+//   );
+// }
 
-  return (
-    <DetailsMenu className="relative">
-      <summary
-        className={`_no-triangle relative flex h-[40px] cursor-pointer list-none items-center justify-center gap-1 rounded-full px-3 text-sm ${baseClasses}`}
-      >
-        <div>{currentGitHubRef}</div>
-        <svg aria-hidden className="-mr-1 h-5 w-5">
-          <use href={`${iconsHref}#chevrons-up-down`} />
-        </svg>
-      </summary>
-      <DetailsPopup>
-        <div className="flex flex-col gap-px">
-          {branches.length > 0 && <VersionsLabel label="Branches" />}
-          {branches.map((branch) => {
-            return (
-              <VersionLink
-                key={branch}
-                to={
-                  currentGitHubRef === branch ? "" : `/docs/${lang}/${branch}`
-                }
-              >
-                {releaseBranch === branch ? `main (${latestVersion})` : branch}
-              </VersionLink>
-            );
-          })}
-          <VersionsLabel label="Versions" />
-          {versions.map((version) => (
-            <VersionLink
-              key={version}
-              to={
-                currentGitHubRef === version ? "" : `/docs/${lang}/${version}`
-              }
-            >
-              {version}
-            </VersionLink>
-          ))}
-        </div>
-      </DetailsPopup>
-    </DetailsMenu>
-  );
-}
+// function VersionLink({
+//   to,
+//   children,
+// }: {
+//   to: string;
+//   children: React.ReactNode;
+// }) {
+//   let isExternal = to.startsWith("http");
+//   let isActive = useIsActivePath(to);
+//   let className = cx(
+//     "flex w-full items-center gap-2 py-2 px-2 rounded-sm text-sm transition-colors duration-100",
+//     isActive
+//       ? "text-black bg-blue-200 dark:bg-blue-800 dark:text-gray-100"
+//       : "text-gray-700 hover:bg-blue-200/50 hover:text-black dark:text-gray-400 dark:hover:text-gray-100 dark:hover:bg-blue-800/50"
+//   );
 
-function VersionsLabel({ label }: { label: string }) {
-  return (
-    <div className="flex w-full items-center gap-2 px-2 py-2 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-300">
-      {label}
-    </div>
-  );
-}
+//   if (isExternal) {
+//     return (
+//       <a href={to} className={className}>
+//         {children}
+//       </a>
+//     );
+//   }
 
-function VersionLink({
-  to,
-  children,
-}: {
-  to: string;
-  children: React.ReactNode;
-}) {
-  let isExternal = to.startsWith("http");
-  let isActive = useIsActivePath(to);
-  let className = cx(
-    "flex w-full items-center gap-2 py-2 px-2 rounded-sm text-sm transition-colors duration-100",
-    isActive
-      ? "text-black bg-blue-200 dark:bg-blue-800 dark:text-gray-100"
-      : "text-gray-700 hover:bg-blue-200/50 hover:text-black dark:text-gray-400 dark:hover:text-gray-100 dark:hover:bg-blue-800/50"
-  );
-
-  if (isExternal) {
-    return (
-      <a href={to} className={className}>
-        {children}
-      </a>
-    );
-  }
-
-  return to ? (
-    <Link to={to} className={className}>
-      {children}
-    </Link>
-  ) : (
-    <span className={className}>{children}</span>
-  );
-}
+//   return to ? (
+//     <Link to={to} className={className}>
+//       {children}
+//     </Link>
+//   ) : (
+//     <span className={className}>{children}</span>
+//   );
+// }
 
 function VersionWarning() {
   let { isLatest, branches, currentGitHubRef } = useLoaderData<typeof loader>();
@@ -359,96 +303,96 @@ function VersionWarning() {
   );
 }
 
-function HeaderMenuLink({
-  className = "",
-  to,
-  children,
-}: {
-  to: string;
-  className?: string;
-  children: React.ReactNode;
-}) {
-  let isActive = useIsActivePath(to);
+// function HeaderMenuLink({
+//   className = "",
+//   to,
+//   children,
+// }: {
+//   to: string;
+//   className?: string;
+//   children: React.ReactNode;
+// }) {
+//   let isActive = useIsActivePath(to);
 
-  return (
-    <Link
-      prefetch="intent"
-      to={to}
-      className={cx(
-        className,
-        "p-2 py-2.5 text-sm leading-none underline-offset-4 hover:underline md:p-3",
-        isActive
-          ? "text-black underline decoration-black dark:text-gray-200 dark:decoration-gray-200"
-          : "text-gray-500 decoration-gray-200 dark:text-gray-400 dark:decoration-gray-500"
-      )}
-    >
-      {children}
-    </Link>
-  );
-}
+//   return (
+//     <Link
+//       prefetch="intent"
+//       to={to}
+//       className={cx(
+//         className,
+//         "p-2 py-2.5 text-sm leading-none underline-offset-4 hover:underline md:p-3",
+//         isActive
+//           ? "text-black underline decoration-black dark:text-gray-200 dark:decoration-gray-200"
+//           : "text-gray-500 decoration-gray-200 dark:text-gray-400 dark:decoration-gray-500"
+//       )}
+//     >
+//       {children}
+//     </Link>
+//   );
+// }
 
-function HeaderMenuMobile({ className = "" }: { className: string }) {
-  // This is the same default, hover, focus style as the VersionSelect
-  let baseClasses =
-    "bg-gray-100 hover:bg-gray-200 [[open]>&]:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 dark:[[open]>&]:bg-gray-700";
+// function HeaderMenuMobile({ className = "" }: { className: string }) {
+//   // This is the same default, hover, focus style as the VersionSelect
+//   let baseClasses =
+//     "bg-gray-100 hover:bg-gray-200 [[open]>&]:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 dark:[[open]>&]:bg-gray-700";
 
-  return (
-    <DetailsMenu className={cx("relative cursor-pointer", className)}>
-      <summary
-        className={cx(
-          baseClasses,
-          "_no-triangle grid h-10 w-10 place-items-center rounded-full"
-        )}
-      >
-        <svg className="h-5 w-5">
-          <use href={`${iconsHref}#menu`} />
-        </svg>
-      </summary>
-      <DetailsPopup>
-        <div className="flex flex-col">
-          <HeaderMenuLink to="/docs">Docs</HeaderMenuLink>
-          <HeaderMenuLink to="/blog">Blog</HeaderMenuLink>
-          <HeaderMenuLink to="/showcase">Showcase</HeaderMenuLink>
-          <HeaderMenuLink to="/resources">Resources</HeaderMenuLink>
-        </div>
-      </DetailsPopup>
-    </DetailsMenu>
-  );
-}
+//   return (
+//     <DetailsMenu className={cx("relative cursor-pointer", className)}>
+//       <summary
+//         className={cx(
+//           baseClasses,
+//           "_no-triangle grid h-10 w-10 place-items-center rounded-full"
+//         )}
+//       >
+//         <svg className="h-5 w-5">
+//           <use href={`${iconsHref}#menu`} />
+//         </svg>
+//       </summary>
+//       <DetailsPopup>
+//         <div className="flex flex-col">
+//           <HeaderMenuLink to="/docs">Docs</HeaderMenuLink>
+//           <HeaderMenuLink to="/blog">Blog</HeaderMenuLink>
+//           <HeaderMenuLink to="/showcase">Showcase</HeaderMenuLink>
+//           <HeaderMenuLink to="/resources">Resources</HeaderMenuLink>
+//         </div>
+//       </DetailsPopup>
+//     </DetailsMenu>
+//   );
+// }
 
-function HeaderLink({
-  className = "",
-  href,
-  svgId,
-  label,
-  svgSize,
-  title,
-}: {
-  className?: string;
-  href: string;
-  svgId: string;
-  label: string;
-  svgSize: string;
-  title?: string;
-}) {
-  let [width, height] = svgSize.split("x");
+// function HeaderLink({
+//   className = "",
+//   href,
+//   svgId,
+//   label,
+//   svgSize,
+//   title,
+// }: {
+//   className?: string;
+//   href: string;
+//   svgId: string;
+//   label: string;
+//   svgSize: string;
+//   title?: string;
+// }) {
+//   let [width, height] = svgSize.split("x");
 
-  return (
-    <a
-      href={href}
-      className={cx(
-        `hidden h-10 w-10 place-items-center text-black hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-50 md:grid`,
-        className
-      )}
-      title={title}
-    >
-      <span className="sr-only">{label}</span>
-      <svg aria-hidden style={{ width: `${width}px`, height: `${height}px` }}>
-        <use href={`${iconsHref}#${svgId}`} />
-      </svg>
-    </a>
-  );
-}
+//   return (
+//     <a
+//       href={href}
+//       className={cx(
+//         `hidden h-10 w-10 place-items-center text-black hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-50 md:grid`,
+//         className
+//       )}
+//       title={title}
+//     >
+//       <span className="sr-only">{label}</span>
+//       <svg aria-hidden style={{ width: `${width}px`, height: `${height}px` }}>
+//         <use href={`${iconsHref}#${svgId}`} />
+//       </svg>
+//     </a>
+//   );
+// }
 
 function NavMenuMobile() {
   let doc = useDoc();
@@ -696,21 +640,24 @@ function EditLink({ repoUrl }: { repoUrl: string }) {
   let isEditableRef = params.ref === "main" || params.ref === "dev";
   let text = "Edit on GitHub";
   // TODO: deal with translations when we add them with params.lang
-  let url = `${repoUrl}/edit/${params.ref}/${doc.slug}.md`;
+  if (doc) {
+    let url = `${repoUrl}/edit/${params.ref}/${doc.slug}.md`;
 
-  if (!doc || !isEditableRef) {
-    text = "View on GitHub";
-    url = `${repoUrl}/blob/${params.ref}/${doc.slug}.md`;
+    if (!doc || !isEditableRef) {
+      text = "View on GitHub";
+      url = `${repoUrl}/blob/${params.ref}/${doc.slug}.md`;
+    }
+
+    return (
+      <a className="flex items-center gap-1 hover:underline" href={url}>
+        {text}
+        <svg aria-hidden className="h-4 w-4">
+          <use href={`${iconsHref}#edit`} />
+        </svg>
+      </a>
+    );
   }
-
-  return (
-    <a className="flex items-center gap-1 hover:underline" href={url}>
-      {text}
-      <svg aria-hidden className="h-4 w-4">
-        <use href={`${iconsHref}#edit`} />
-      </svg>
-    </a>
-  );
+  return null;
 }
 
 function InnerContainer({ children }: { children: React.ReactNode }) {

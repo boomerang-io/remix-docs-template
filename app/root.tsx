@@ -27,6 +27,10 @@ export function links() {
       type: "image/png",
       href: "/boomerang-icon.png",
     },
+    {
+      rel: "stylesheet",
+      href: "https://rsms.me/inter/inter.css",
+    },
   ];
 }
 
@@ -106,14 +110,14 @@ export function ErrorBoundary() {
   if (isRouteErrorResponse(error)) {
     return (
       <Layout noIndex title={error.statusText}>
-        <div className="flex flex-1 flex-col justify-center text-white">
+        <div className="bg-black flex flex-1 flex-col justify-center text-white h-screen">
           <div className="text-center leading-none">
-            <h1 className="font-mono text-[25vw]">{error.status}</h1>
             <a
-              className="inline-block text-[8vw] underline"
+              className="inline-block text-[8vw] underline:none"
               href={`https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/${error.status}`}
+              target="_blank"
             >
-              {error.statusText}
+              <h1 className="font-mono text-[25vw]">{error.status}</h1>
             </a>
           </div>
         </div>
