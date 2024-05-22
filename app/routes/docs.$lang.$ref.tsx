@@ -498,9 +498,7 @@ function Menu() {
       </ul>
     </nav>
   ) : (
-    <div className="bold text-gray-300 dark:text-gray-400">
-      Failed to load menu
-    </div>
+    <div className="bold text-gray-300">Failed to load menu</div>
   );
 }
 
@@ -602,7 +600,7 @@ function MenuCategoryLink({
         "outline-none focus-visible:text-blue-brand dark:focus-visible:text-blue-400",
         isActive
           ? "text-blue-brand dark:text-blue-brand"
-          : "hover:text-blue-brand dark:hover:text-blue-400 "
+          : "hover:text-blue-500"
       )}
     >
       {children}
@@ -617,14 +615,11 @@ function MenuLink({ to, children }: { to: string; children: React.ReactNode }) {
       prefetch="intent"
       to={to}
       className={cx(
-        "group relative my-px flex min-h-[2.25rem] items-center rounded-2xl border-transparent px-3 py-2 text-sm",
+        "group relative my-px flex min-h-[2.25rem] items-center rounded-md border-transparent px-3 py-2 text-sm",
         "outline-none transition-colors duration-100 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-800  dark:focus-visible:ring-gray-100",
         isActive
-          ? ["text-black dark:text-gray-100", "bg-blue-200 dark:bg-blue-800"]
-          : [
-              "text-gray-700 hover:text-black dark:text-gray-400 dark:hover:text-gray-100",
-              "hover:bg-blue-100 dark:hover:bg-blue-800/50",
-            ]
+          ? ["text-black", "bg-accent"]
+          : ["text-gray-700 hover:text-black", "hover:bg-accent"]
       )}
       children={children}
     />
@@ -649,7 +644,11 @@ function EditLink({ repoUrl }: { repoUrl: string }) {
     }
 
     return (
-      <a className="flex items-center gap-1 hover:underline" href={url}>
+      <a
+        className="flex items-center gap-1 hover:underline"
+        href={url}
+        target="_blank"
+      >
         {text}
         <svg aria-hidden className="h-4 w-4">
           <use href={`${iconsHref}#edit`} />

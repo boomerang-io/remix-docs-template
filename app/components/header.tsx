@@ -61,7 +61,7 @@ export function Header({ className, versionData }: HeaderProps) {
               >
                 <SelectTrigger
                   id="version"
-                  className="w-40 border border-none shadow-none rounded-md h-md py-2 text-md font-medium hover:border-gray-400 focus:outline-none"
+                  className="w-40 border border-none shadow-none rounded-md h-md py-2 text-md font-medium bg-accent focus:outline-none"
                 >
                   <SelectValue placeholder="Select a version" />
                 </SelectTrigger>

@@ -4,11 +4,12 @@ import { json } from "@remix-run/node";
 import { handleRedirects } from "~/utils/http.server";
 import invariant from "tiny-invariant";
 import { getRepoImage } from "~/utils/github";
+import { docConfig } from "~/config/doc";
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   invariant(params.ref, "expected `ref` params");
   try {
-    let slug = `docs/${params["*"] || "index"}`;
+    let slug = `${docConfig.pathToDocs}/${params["*"] || "index"}`;
     console.log("In here - Fetching: ", params.ref, slug);
     let image = await getRepoImage(params.ref, slug);
     if (!image) throw null;
