@@ -46,11 +46,12 @@ The markdown files can contain frontmatter as follows
 
 ```jsx
 ---
-title: A wonderful title
-description: A detailed description
-order: 1
+title: A wonderful title| <string>
+description: A detailed description | <string>
+order: 1 | <number>
 toc: true | false
 hidden: true | false
+tag: new | beta | <string>
 ---
 ```
 

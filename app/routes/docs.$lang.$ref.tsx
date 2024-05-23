@@ -44,6 +44,7 @@ import { VersionWarningMessage } from "~/components/version-warning-message";
 import { siteConfig } from "~/config/site";
 import { docConfig } from "~/config/doc";
 import { Header } from "~/components/header";
+import { Badge } from "~/components/ui/badge";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   let { lang = "en", ref = "main", "*": splat } = params;
@@ -486,7 +487,10 @@ function Menu() {
                   {category.children.map((doc) => {
                     return (
                       <MenuLink key={doc.slug} to={doc.slug}>
-                        {doc.attrs.title} {doc.attrs.new && "🆕"}
+                        {doc.attrs.title}{" "}
+                        {doc.attrs.tag && (
+                          <Badge variant="secondary">${doc.attrs.tag}</Badge>
+                        )}
                       </MenuLink>
                     );
                   })}
