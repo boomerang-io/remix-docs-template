@@ -1,6 +1,5 @@
 import * as React from "react";
 import {
-  Form,
   Link,
   Outlet,
   useLoaderData,
@@ -14,9 +13,8 @@ import {
 import { json, redirect } from "@remix-run/node";
 import type { LoaderFunctionArgs, HeadersFunction } from "@remix-run/node";
 import cx from "clsx";
-import { useNavigate } from "react-router-dom";
 import "~/styles/docs.css";
-import { DetailsMenu, DetailsPopup } from "~/components/details-menu";
+import { DetailsMenu } from "~/components/details-menu";
 import iconsHref from "~/icons.svg";
 import {
   getRepoBranches,
@@ -26,16 +24,6 @@ import {
   getLatestVersion,
   getLatestVersionHeads,
 } from "~/utils/github";
-import {
-  SelectValue,
-  SelectTrigger,
-  SelectItem,
-  SelectContent,
-  SelectLabel,
-  SelectSeparator,
-  SelectGroup,
-  Select,
-} from "~/components/ui/select";
 import type { Doc } from "~/utils/github";
 import { octokit } from "~/utils/github.server";
 import { env } from "~/utils/env.server";
@@ -114,7 +102,6 @@ export default function DocsLayout() {
   }, [location]);
 
   let docsContainer = React.useRef<HTMLDivElement>(null);
-  useCodeBlockCopyButton(docsContainer);
 
   let versionData = useLoaderData<typeof loader>();
 
@@ -690,65 +677,4 @@ function useIsActivePath(to: string) {
   let location = navigating ? navigation.location! : currentLocation;
   let match = matchPath(pathname + "/*", location.pathname);
   return Boolean(match);
-}
-
-function useCodeBlockCopyButton(ref: React.RefObject<HTMLDivElement>) {
-  let location = useLocation();
-  React.useEffect(() => {
-    let container = ref.current;
-    if (!container) return;
-
-    let codeBlocks = container.querySelectorAll(
-      "[data-code-block][data-lang]:not([data-nocopy])"
-    );
-    let buttons = new Map<
-      HTMLButtonElement,
-      { listener: (event: MouseEvent) => void; to: number }
-    >();
-
-    for (let codeBlock of codeBlocks) {
-      let button = document.createElement("button");
-      let label = document.createElement("span");
-      button.type = "button";
-      button.dataset.codeBlockCopy = "";
-      button.addEventListener("click", listener);
-
-      label.textContent = "Copy code to clipboard";
-      label.classList.add("sr-only");
-      button.appendChild(label);
-      codeBlock.appendChild(button);
-      buttons.set(button, { listener, to: -1 });
-
-      function listener(event: MouseEvent) {
-        event.preventDefault();
-        let pre = codeBlock.querySelector("pre");
-        let text = pre?.textContent;
-        if (!text) return;
-        navigator.clipboard
-          .writeText(text)
-          .then(() => {
-            button.dataset.copied = "true";
-            let to = window.setTimeout(() => {
-              window.clearTimeout(to);
-              if (button) {
-                button.dataset.copied = undefined;
-              }
-            }, 3000);
-            if (buttons.has(button)) {
-              buttons.get(button)!.to = to;
-            }
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-      }
-    }
-    return () => {
-      for (let [button, props] of buttons) {
-        button.removeEventListener("click", props.listener);
-        button.parentElement?.removeChild(button);
-        window.clearTimeout(props.to);
-      }
-    };
-  }, [ref, location.pathname]);
 }
