@@ -1,9 +1,7 @@
 /*!
- * Adapted from
- * - ggoodman/nostalgie
- *   - MIT https://github.com/ggoodman/nostalgie/blob/45f3f6356684287a214dab667064ec9776def933/LICENSE
- *   - https://github.com/ggoodman/nostalgie/blob/45f3f6356684287a214dab667064ec9776def933/src/worker/mdxCompiler.ts
- * - remix/remix-website
+ * Adapted from https://github.com/remix/remix-website
+ * 
+ * Uses unified, remark, and rehype to process markdown content.
  */
 import parseFrontMatter from "front-matter";
 import themeJson from "~/styles/base16.json";
@@ -66,6 +64,9 @@ export async function getProcessor(options?: ProcessorOptions) {
     .use(rehypePrettyCode, {
       keepBackground: false,
       theme: JSON.parse(themeString),
+      // Needed if the documentation you are using has different meta strings
+      // TODO: turn this into optional externalised 
+      // filterMetaString: (str) => str.replace(/lines=\[([^]*)\]/g, '{$1}').replace(/filename=([^ ]*)/g, 'title="$1"'),
       transformers: [
         transformerCopyButton({
           visibility: 'always',
