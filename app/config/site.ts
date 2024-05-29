@@ -4,8 +4,12 @@ export const siteConfig = {
   url: "https://useboomerang.io",
   description:
     "A collection of open source projects for CI/CD and automation",
-  links: {
-    github: "https://github.com/boomerang-io/remix-docs-template"
+  github: {
+    repoUrl: "https://github.com/boomerang-io/remix-docs-template"
+  },
+  twitter: {
+    handle: "@useboomerang",
+    url: "https://twitter.com/useboomerang"
   },
   license: {
     name: "Apache 2.0",
