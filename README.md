@@ -70,6 +70,7 @@ Additionally, there is a `.env` file that controls the environment variables for
 - `GITHUB_TOKEN` - A token to increase the rate limiting from 60/hr to 1000/hr
 - `SOURCE_REPO` - GitHub repo to pull docs from i.e. `boomerang-io/docs`
 - `LOCAL_REPO_RELATIVE_PATH` - For development, reading the docs from a local repo i.e. `../content`
+- `NO_CACHE` - Turn off the cache for development
 
 ## Setup
 
