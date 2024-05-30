@@ -49,7 +49,7 @@ export function Header({ className, versionData }: HeaderProps) {
           <Link to="/" className="mr-6 flex items-center space-x-4">
             <BookIcon className="h-6 w-6" />
             <span className="sr-only">{siteConfig.name}</span>
-            <span className="font-bold sm:inline-block sm:text-">
+            <span className="font-medium sm:inline-block sm:text-">
               {siteConfig.name}
             </span>
           </Link>
