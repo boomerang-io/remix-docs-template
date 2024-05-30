@@ -69,7 +69,7 @@ export default function Index() {
               <div className="flex flex-col items-start space-y-2">
                 <ServerIcon className="text-primary w-6 h-6" />
                 <h3 className="text-lg font-semibold">
-                  Customisable components
+                  Customisable components <i>future</i>
                 </h3>
                 <p className="text-sm text-gray-600">
                   Components are using shadcn/ui and can be themed or swapped
