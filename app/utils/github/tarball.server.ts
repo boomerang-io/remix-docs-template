@@ -2,7 +2,8 @@ import gunzip from "gunzip-maybe";
 import tar from "tar-stream";
 import { docConfig } from "~/config/doc";
 
-const REGULAR_EXPRESSION = `${docConfig.pathToDocs}\/(.+)\.md$`;
+const pathPrefix = docConfig.pathToDocs ? `${docConfig.pathToDocs}\/` : "";
+const REGULAR_EXPRESSION = `${pathPrefix}(.+)\.md$`;
 
 type ProcessFile = ({
   filename,

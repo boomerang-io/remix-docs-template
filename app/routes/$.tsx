@@ -56,7 +56,8 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   try {
     let ref = "main";
     let lang = "en";
-    let doc = await getRepoDoc(ref, `${docConfig.pathToDocs}/${params["*"]}`);
+    let pathPrefix = docConfig.pathToDocs ? `${docConfig.pathToDocs}/` : "";
+    let doc = await getRepoDoc(ref, `${pathPrefix}${params["*"]}`);
     if (!doc) throw null;
     // FIXME: This results in two fetches, as the loader for the docs page will
     // repeat the request cycle. This isn't a problem if the doc is in the LRU

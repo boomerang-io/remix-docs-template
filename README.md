@@ -67,16 +67,23 @@ To provide as much flexibility as possible, inside the `/app/config` directory a
 
 Additionally, there is a `.env` file that controls the environment variables for the template. This includes
 
-- `GITHUB_TOKEN` - A token to increase the rate limiting from 60/hr to 1000/hr
-- `SOURCE_REPO` - GitHub repo to pull docs from i.e. `boomerang-io/docs`
-- `LOCAL_REPO_RELATIVE_PATH` - For development, reading the docs from a local repo i.e. `../content`
-- `NO_CACHE` - Turn off the cache for development
+| Variable                   | Description                                                           | Required |
+| -------------------------- | --------------------------------------------------------------------- | -------- |
+| `GITHUB_TOKEN`             | A token to increase the rate limiting from 60/hr to 1000/hr           | No       |
+| `SOURCE_REPO`              | GitHub repo to pull docs from i.e. `boomerang-io/docs`                | Yes      |
+| `LOCAL_REPO_RELATIVE_PATH` | For development, reading the docs from a local repo i.e. `../content` | No       |
+| `NO_CACHE`                 | Turn off the cache for development                                    | No       |
 
 ## Setup
 
+1. Copy the `.env.example` file and duplicate it to `.env`
+2. Fill in the required configuration options in the `.env` file
+3. Update the configuration files in the `/app/config` directory
+4. Run `pnpm install` to install the dependencies
+
 ## Development
 
-Run the Vite dev server:
+Run the Vite dev server
 
 ```shellscript
 pnpm run dev

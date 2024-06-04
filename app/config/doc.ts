@@ -9,7 +9,7 @@ This file contains the configuration for the documentation and versioning integr
 */
 
 export const docConfig = {
-        pathToDocs: "bob",
+        pathToDocs: "flow",
         versions: {
             branches: ["main"],
             prefix: "v",

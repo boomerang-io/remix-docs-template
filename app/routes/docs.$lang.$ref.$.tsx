@@ -24,6 +24,7 @@ import type { loader as docsLayoutLoader } from "~/routes/docs.$lang.$ref";
 import type { loader as rootLoader } from "~/root";
 import { getMeta } from "~/utils/meta";
 import { docConfig } from "~/config/doc";
+import { siteConfig } from "~/config/site";
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   let url = new URL(request.url);
@@ -37,9 +38,10 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   }
   //Continue processing docs
   try {
+    let pathPrefix = docConfig.pathToDocs ? `${docConfig.pathToDocs}/` : "";
     let slug = params["*"]?.endsWith("/changelog")
       ? "CHANGELOG"
-      : `${docConfig.pathToDocs}/${params["*"] || "index"}`;
+      : `${pathPrefix}${params["*"] || "index"}`;
     let doc = await getRepoDoc(params.ref, slug);
     if (!doc) throw null;
     return json(
@@ -115,14 +117,14 @@ export const meta: MetaFunction<Loader, MatchLoaders> = (args) => {
   let { siteUrl, ogImageUrl } = data;
 
   return getMeta({
-    title: `${title} | Remix`,
+    title: `${title} | ${siteConfig.name}`,
     // TODO: add a description
     // let description: 'some description';
     siteUrl,
     image: ogImageUrl,
     additionalMeta: [
       { name: "og:type", content: "article" },
-      { name: "og:site_name", content: "Remix" },
+      { name: "og:site_name", content: `${siteConfig.name}` },
       { name: "docsearch:language", content: args.params.lang || "en" },
       { name: "docsearch:version", content: args.params.ref || "v1" },
       { name: "robots", content: robots },
@@ -135,14 +137,11 @@ export default function DocPage() {
   let { doc } = useLoaderData<typeof loader>();
   let ref = React.useRef<HTMLDivElement>(null);
   useDelegatedReactRouterLinks(ref);
-  let matches = useMatches();
-  let isDocsIndex = matches.some((match) =>
-    match.id.endsWith("$lang.$ref/index")
-  );
+  let showTOC = doc.attrs.toc !== false;
 
   return (
     <div className="xl:flex xl:w-full xl:justify-between xl:gap-8">
-      {isDocsIndex ? null : doc.headings.length > 3 ? (
+      {!showTOC ? null : doc.headings.length > 3 ? (
         <>
           <SmallOnThisPage doc={doc} />
           <LargeOnThisPage doc={doc} />
@@ -151,10 +150,7 @@ export default function DocPage() {
         <div className="hidden xl:order-1 xl:block xl:w-56 xl:flex-shrink-0" />
       )}
       <div className="min-w-0 xl:flex-grow">
-        <div
-          ref={ref}
-          className="markdown w-full max-w-3xl pt-8 xl:pt-12 pb-[33vh]"
-        >
+        <div ref={ref} className="markdown w-full max-w-3xl pt-8 pb-[33vh]">
           <div
             className="md-prose"
             dangerouslySetInnerHTML={{ __html: doc.html }}

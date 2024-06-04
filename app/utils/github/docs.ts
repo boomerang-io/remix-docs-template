@@ -245,8 +245,10 @@ function makeSlug(docName: string): string {
   // path in front of "docs/", so grab any of that stuff too. Maybe there's a
   // way to control the basename of files when we make the local tarball but I
   // dunno how to do that right now.
+
+  let pathPrefix = docConfig.pathToDocs ? `${docConfig.pathToDocs}\/` : "";
   return docName
-    .replace(new RegExp(`^(.+\/)?${docConfig.pathToDocs}\/`), "")
+    .replace(new RegExp(`^(.+\/)?${pathPrefix}`), "")
     .replace(/\.md$/, "")
     .replace(/index$/, "")
     .replace(/\/$/, "");
