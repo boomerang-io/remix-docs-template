@@ -11,7 +11,6 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   try {
     let pathPrefix = docConfig.pathToDocs ? `${docConfig.pathToDocs}/` : "";
     let slug = `${pathPrefix}${params["*"]}`;
-    console.log("In here - Fetching: ", params.ref, slug);
     let image = await getRepoImage(params.ref, slug);
     if (!image) throw null;
     return new Response(image, {

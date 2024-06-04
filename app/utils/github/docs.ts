@@ -185,8 +185,6 @@ export async function getMenuFromStream(stream: NodeJS.ReadableStream) {
   let processFiles = createTarFileProcessor(stream);
   await processFiles(async ({ filename, content }) => {
     let { attrs, content: md } = parseAttrs(content, filename);
-
-    console.log(`Attributes: ${JSON.stringify(attrs)}`)
     let slug = makeSlug(filename);
 
     // don't need docs/index.md in the menu
