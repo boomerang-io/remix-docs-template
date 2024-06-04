@@ -69,7 +69,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
     currentGitHubRef: ref,
     lang,
     isLatest,
-    repoUrl: "https://github.com/" + env.SOURCE_REPO,
+    repoUrl: siteConfig.github.repoUrl,
   });
 };
 
