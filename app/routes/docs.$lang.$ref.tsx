@@ -37,36 +37,49 @@ import { Badge } from "~/components/ui/badge";
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   let { lang = "en", ref = "main", "*": splat } = params;
 
-  let branchesInMenu = docConfig.versions.branches;
+  let branchesInMenu = docConfig.branches;
   let [tags, branches] = await Promise.all([
-    //TODO: remove releasePackage and use config
-    getRepoTags({ octokit, releasePackage: env.RELEASE_PACKAGE }),
+    getRepoTags({ octokit, releasePrefix: docConfig.versions.prefix }),
     getRepoBranches({ octokit }),
   ]);
+
+  console.log("Tags: ", tags);
   if (!tags || !branches) {
     throw new Response("Cannot reach GitHub", { status: 503 });
   }
 
-  if (process.env.NODE_ENV === "development") {
+  if (
+    process.env.NODE_ENV === "development" &&
+    !branchesInMenu.includes("local")
+  ) {
     branches.push("local");
     branchesInMenu.push("local");
   }
 
-  let betterUrl = validateParams(tags, branches, { lang, ref, "*": splat });
-  if (betterUrl) throw redirect("/docs/" + betterUrl);
+  let betterUrl = validateParams(tags, branches, {
+    lang,
+    ref,
+    "*": splat,
+  });
+  if (betterUrl) {
+    console.log("Redirecting to better URL: ", betterUrl);
+    throw redirect("/docs/" + betterUrl);
+  }
 
   let latestVersion = getLatestVersion(tags);
-  let menu = await getRepoDocsMenu(ref, lang);
-  let releaseBranch = "main";
+  let versions = getLatestVersionHeads(tags);
+
+  let menu = await getRepoDocsMenu(useGitHubRef(ref), lang);
+  let releaseBranch = docConfig.releaseBranch;
   let isLatest = ref === releaseBranch || ref === latestVersion;
 
   return json({
     menu,
-    versions: getLatestVersionHeads(tags),
+    versions,
     latestVersion,
     releaseBranch,
     branches: branchesInMenu,
-    currentGitHubRef: ref,
+    currentRef: ref,
     lang,
     isLatest,
     repoUrl: siteConfig.github.repoUrl,
@@ -177,7 +190,7 @@ function Footer() {
 }
 
 function VersionWarning() {
-  let { isLatest, branches, currentGitHubRef } = useLoaderData<typeof loader>();
+  let { isLatest, branches, currentRef } = useLoaderData<typeof loader>();
   if (isLatest) return null;
   let { "*": splat } = useParams();
 
@@ -186,7 +199,7 @@ function VersionWarning() {
       <div className="p-2 bg-[#0072c3] text-xs text-white">
         <VersionWarningMessage
           branches={branches}
-          currentGitHubRef={currentGitHubRef}
+          currentRef={currentRef}
           splat={splat}
         />
       </div>
@@ -288,7 +301,9 @@ function Menu() {
                       <MenuLink key={doc.slug} to={doc.slug}>
                         {doc.attrs.title}{" "}
                         {doc.attrs.tag && (
-                          <Badge variant="secondary">${doc.attrs.tag}</Badge>
+                          <Badge variant="default" className="!font-normal">
+                            {doc.attrs.tag}
+                          </Badge>
                         )}
                       </MenuLink>
                     );
@@ -418,7 +433,7 @@ function MenuLink({ to, children }: { to: string; children: React.ReactNode }) {
       prefetch="intent"
       to={to}
       className={cx(
-        "group relative my-px flex min-h-[2.25rem] items-center rounded-md border-transparent px-3 py-2 text-sm",
+        "group relative my-px flex min-h-[2.25rem] items-center justify-between rounded-md border-transparent px-3 py-2 text-sm",
         "outline-none transition-colors duration-100 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-800  dark:focus-visible:ring-gray-100",
         isActive
           ? ["text-black", "bg-accent"]
@@ -435,7 +450,7 @@ function MenuLink({ to, children }: { to: string; children: React.ReactNode }) {
 function EditLink({ repoUrl }: { repoUrl: string }) {
   let doc = useDoc();
   let params = useParams();
-  let isEditableRef = params.ref === "main" || params.ref === "dev";
+  let isEditableRef = docConfig.branches.includes(params.ref || "");
   let text = "Edit on GitHub";
   // TODO: deal with translations when we add them with params.lang
   if (doc) {
@@ -489,4 +504,13 @@ function useIsActivePath(to: string) {
   let location = navigating ? navigation.location! : currentLocation;
   let match = matchPath(pathname + "/*", location.pathname);
   return Boolean(match);
+}
+
+export function useGitHubRef(ref: string): string {
+  let branches = docConfig.branches;
+  let githubRef = ref;
+  if (docConfig.versions.prefix && !branches.includes(ref)) {
+    githubRef = docConfig.versions.prefix + ref;
+  }
+  return githubRef;
 }

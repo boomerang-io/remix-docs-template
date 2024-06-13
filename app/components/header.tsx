@@ -26,21 +26,15 @@ type HeaderProps = {
     latestVersion?: string;
     releaseBranch?: string;
     branches?: string[];
-    currentGitHubRef?: string;
+    currentRef?: string;
     lang?: string;
   };
 };
 
 export function Header({ className, versionData }: HeaderProps) {
   let navigate = useNavigate();
-  let {
-    versions,
-    latestVersion,
-    releaseBranch,
-    branches,
-    currentGitHubRef,
-    lang,
-  } = versionData || {};
+  let { versions, latestVersion, releaseBranch, branches, currentRef, lang } =
+    versionData || {};
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -57,7 +51,7 @@ export function Header({ className, versionData }: HeaderProps) {
             <nav className="flex items-center text-sm">
               <Select
                 onValueChange={(v) => navigate(`/docs/${lang}/` + v)}
-                defaultValue={currentGitHubRef}
+                defaultValue={currentRef}
               >
                 <SelectTrigger
                   id="version"
@@ -82,7 +76,7 @@ export function Header({ className, versionData }: HeaderProps) {
                   <SelectGroup>
                     {versions && versions?.length > 0 && (
                       <SelectLabel className="text-sm text-muted-foreground font-light">
-                        Tags
+                        Versions
                       </SelectLabel>
                     )}
                     <SelectSeparator />

@@ -29,9 +29,6 @@ const envSchema = z.object({
   // GitHub repo to pull docs from
   SOURCE_REPO: z.string(),
 
-  // Package from which to base docs version
-  RELEASE_PACKAGE: z.string(),
-
   // For development, reading the docs from a local repo
   LOCAL_REPO_RELATIVE_PATH: z
     .string()

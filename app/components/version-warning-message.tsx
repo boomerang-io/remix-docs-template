@@ -3,17 +3,17 @@ import * as React from "react";
 
 export function VersionWarningMessage({
   branches,
-  currentGitHubRef,
+  currentRef,
   splat,
 }: {
   branches: string[];
-  currentGitHubRef: string;
+  currentRef: string;
   splat?: string;
 }) {
   // Don't want to show release-next in the menu, but we do want to show
   // the branch-warning
-  let warning = [...branches].includes(currentGitHubRef)
-    ? `Viewing docs for ${currentGitHubRef} branch, not the latest release`
+  let warning = [...branches].includes(currentRef)
+    ? `Viewing docs for ${currentRef} branch, not the latest release`
     : `Viewing docs for an older release`;
 
   return (

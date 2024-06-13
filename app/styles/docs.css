@@ -202,17 +202,17 @@
   }
 
   & h2 {
-    @apply text-xl font-bold md:text-2xl;
+    @apply text-xl font-semibold md:text-2xl;
   }
 
   & h3 {
-    @apply text-lg font-bold md:text-xl;
+    @apply text-lg font-semibold md:text-xl;
   }
 
   & h4,
   & h5,
   & h6 {
-    @apply text-lg font-bold md:text-xl;
+    @apply text-lg font-semibold md:text-xl;
   }
 
   & h1 code,
@@ -579,20 +579,24 @@ code[data-line-numbers-max-digits="3"] > [data-line]::before {
 }
 
 .rehype-pretty-copy {  
-  @apply absolute !mr-3 !mt-[-5px] cursor-pointer opacity-20 !h-7 !w-7 shadow-sm;
+  @apply absolute !mr-3 !mt-[-5px] cursor-pointer opacity-50 !h-7 !w-7 shadow-sm !rounded-md;
   background-color: hsl(var(--background));
   border-color: hsl(var(--input));
   border-width: 1px;
   align-items: center;
   justify-content: center;
   
-  .ready {
+  & .ready {
     @apply !h-4 !w-4 !m-0;
   }
 
-  .success {
+  & .success {
     @apply !h-4 !w-4 !m-0;
   }
+}
+
+.rehype-pretty-copy:hover {
+  @apply opacity-100 bg-gray-100;
 }
 
 figure[data-rehype-pretty-code-figure]:has(> [data-rehype-pretty-code-title]) > pre > code button.rehype-pretty-copy {

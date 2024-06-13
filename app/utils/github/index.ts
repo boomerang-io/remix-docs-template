@@ -19,12 +19,12 @@ const REPO = env.SOURCE_REPO;
 
 export function getRepoTags({
   octokit,
-  releasePackage,
+  releasePrefix,
 }: {
   octokit: Octokit;
-  releasePackage: string;
+  releasePrefix: string;
 }) {
-  return getTags(REPO, { octokit, releasePackage });
+  return getTags(REPO, { octokit, releasePrefix });
 }
 
 export function getRepoBranches({ octokit }: { octokit: Octokit }) {
@@ -33,12 +33,12 @@ export function getRepoBranches({ octokit }: { octokit: Octokit }) {
 
 export async function getLatestRepoTag({
   octokit,
-  releasePackage,
+  releasePrefix,
 }: {
   octokit: Octokit;
-  releasePackage: string;
+  releasePrefix: string;
 }): Promise<string> {
-  let tags = await getTags(REPO, { octokit, releasePackage });
+  let tags = await getTags(REPO, { octokit, releasePrefix });
   invariant(tags, "Expected tags in getLatestRepoTag");
   return getLatestVersion(tags);
 }

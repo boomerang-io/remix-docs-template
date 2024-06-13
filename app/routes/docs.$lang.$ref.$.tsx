@@ -20,7 +20,10 @@ import type { Doc } from "~/utils/github";
 import { getRepoDoc } from "~/utils/github";
 import iconsHref from "~/icons.svg";
 import { useDelegatedReactRouterLinks } from "~/components/delegate-links";
-import type { loader as docsLayoutLoader } from "~/routes/docs.$lang.$ref";
+import {
+  useGitHubRef,
+  type loader as docsLayoutLoader,
+} from "~/routes/docs.$lang.$ref";
 import type { loader as rootLoader } from "~/root";
 import { getMeta } from "~/utils/meta";
 import { docConfig } from "~/config/doc";
@@ -30,6 +33,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   let url = new URL(request.url);
   let baseUrl = url.protocol + "//" + url.host;
   let siteUrl = baseUrl + url.pathname;
+  //TODO - figure out og.1.jpg
   let ogImageUrl = baseUrl + "/img/og.1.jpg";
   invariant(params.ref, "expected `ref` params");
   //Handle Images
@@ -42,7 +46,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     let slug = params["*"]?.endsWith("/changelog")
       ? "CHANGELOG"
       : `${pathPrefix}${params["*"] || "index"}`;
-    let doc = await getRepoDoc(params.ref, slug);
+    let doc = await getRepoDoc(useGitHubRef(params.ref), slug);
     if (!doc) throw null;
     return json(
       { doc, siteUrl, ogImageUrl },
@@ -81,10 +85,12 @@ export const meta: MetaFunction<Loader, MatchLoaders> = (args) => {
     (match) => match.id === LAYOUT_LOADER_KEY
   )?.data;
   let rootData = args.matches.find((match) => match.id === "root")?.data;
-  invariant(
-    parentData && "latestVersion" in parentData,
-    "No parent data found"
-  );
+  if (process.env.NODE_ENV !== "development") {
+    invariant(
+      parentData && "latestVersion" in parentData,
+      "No parent data found"
+    );
+  }
   invariant(rootData && "isProductionHost" in rootData, "No root data found");
 
   if (!data) {
@@ -93,21 +99,20 @@ export const meta: MetaFunction<Loader, MatchLoaders> = (args) => {
 
   let { doc } = data;
 
-  let { latestVersion, releaseBranch, branches, currentGitHubRef } = parentData;
+  let { latestVersion, releaseBranch, branches, currentRef } = parentData;
 
   let titleAppend =
-    currentGitHubRef === releaseBranch || currentGitHubRef === latestVersion
+    currentRef === releaseBranch || currentRef === latestVersion
       ? ""
-      : branches.includes(currentGitHubRef)
-      ? ` (${currentGitHubRef} branch)`
-      : currentGitHubRef.startsWith("v")
-      ? ` (${currentGitHubRef})`
-      : ` (v${currentGitHubRef})`;
+      : branches.includes(currentRef)
+      ? ` (${currentRef} branch)`
+      : ` (${currentRef})`;
 
   let title = doc.attrs.title + titleAppend;
+  let description = doc.attrs.description ?? siteConfig.description;
 
   // seo: only want to index the main branch
-  let isMainBranch = currentGitHubRef === releaseBranch;
+  let isMainBranch = currentRef === releaseBranch;
 
   let robots =
     rootData.isProductionHost && isMainBranch
@@ -118,8 +123,7 @@ export const meta: MetaFunction<Loader, MatchLoaders> = (args) => {
 
   return getMeta({
     title: `${title} | ${siteConfig.name}`,
-    // TODO: add a description
-    // let description: 'some description';
+    description: `${description}`,
     siteUrl,
     image: ogImageUrl,
     additionalMeta: [

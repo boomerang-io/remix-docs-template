@@ -4,7 +4,7 @@ import semver from "semver";
 import type { Octokit } from "octokit";
 import { docConfig } from "~/config/doc";
 
-type CacheContext = { octokit: Octokit; releasePackage: string };
+type CacheContext = { octokit: Octokit; releasePrefix: string };
 declare global {
   var tagsCache: LRUCache<string, string[], CacheContext>;
 }
@@ -14,10 +14,10 @@ declare global {
  */
 export async function getTags(
   repo: string,
-  { octokit, releasePackage }: CacheContext,
+  { octokit, releasePrefix }: CacheContext,
 ) {
   return tagsCache.fetch(repo, {
-    context: { octokit, releasePackage },
+    context: { octokit, releasePrefix },
   });
 }
 
@@ -55,16 +55,17 @@ global.tagsCache ??= new LRUCache<string, string[], CacheContext>({
   fetchMethod: async (key, _, { context }) => {
     console.log("Fetching fresh tags (releases)");
     let [owner, repo] = key.split("/");
-    return getAllReleases(owner, repo, context.releasePackage, context);
+    return getAllReleases(owner, repo, context.releasePrefix, context);
   },
 });
 
-// TODO: implementation details of the remix site leaked into here cause I'm in
-// a hurry now, sorry!
+/*
+* Retrieves all releases, filters by prefix, and returns a map of <semver, tag / release>
+*/
 export async function getAllReleases(
   owner: string,
   repo: string,
-  primaryPackage: string,
+  releasePrefix: string,
   {
     octokit,
     page = 1,
@@ -88,32 +89,28 @@ export async function getAllReleases(
     throw new Error(`Failed to fetch releases: ${data}`);
   }
 
-  //Set regex to semver or prefixed semver
-  let regex = new RegExp(`^${docConfig.versions.prefix}[0-9]`);
+  //Define regex with optional prefix (i.e. v or flow@)
+  let regex = new RegExp(`^${releasePrefix}[0-9]`);
 
   releases.push(
     ...data
       .filter((release) => {
         return Boolean(
-          // Check the release name
-          // ideally all we care about is release.name, but if not set,
-          // we check the tag name too
+          // Check the release name or tag_name
+          // Sometimes release name isn't set or won't match the pattern.
           regex.test(release?.name || "") || regex.test(release.tag_name),
         );
       })
       .map((release) => {
         return (
-          // pre-changesets, tag_name started with "v"
-          regex.test(release.tag_name)
-            ? release.tag_name
-            : "unknown"
+          release.tag_name.replace(releasePrefix, "")
         );
       }),
   );
 
   let parsed = parseLinkHeader(headers.link);
   if (parsed?.next) {
-    return await getAllReleases(owner, repo, primaryPackage, {
+    return await getAllReleases(owner, repo, releasePrefix, {
       page: page + 1,
       releases,
       octokit,

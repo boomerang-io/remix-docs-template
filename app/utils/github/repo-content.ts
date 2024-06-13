@@ -7,7 +7,7 @@ import { env } from "~/utils/env.server";
  * Fetches the contents of a file in a repository or from your local disk.
  *
  * @param ref The GitHub ref, use `"local"` for local docs development
- * @param filepath The filepath inside the repo (including "docs/")
+ * @param filepath The filepath inside the repo
  * @returns The text of the file
  */
 export async function getRepoContent(
@@ -34,7 +34,7 @@ export async function getRepoContent(
  * Fetches the contents of a file in a repository or from your local disk.
  *
  * @param ref The GitHub ref, use `"local"` for local docs development
- * @param filepath The filepath inside the repo (including "docs/")
+ * @param filepath The filepath inside the repo
  * @returns raw image
  */
 export async function getRepoImage(
@@ -42,7 +42,7 @@ export async function getRepoImage(
   ref: string,
   filepath: string,
 ): Promise<Buffer | null> {
-  if (ref === "local") return null;
+  if (ref === "local") return getLocalImage(filepath);
   let [owner, repo] = repoPair.split("/");
   let pathname = `/${owner}/${repo}/${ref}/${filepath}`;
   console.log("Fetching: ", pathname)
@@ -65,3 +65,14 @@ async function getLocalContent(filepath: string): Promise<string> {
   let content = await fsp.readFile(localFilePath);
   return content.toString();
 }
+
+async function getLocalImage(filepath: string): Promise<Buffer> {
+  invariant(
+    env.LOCAL_REPO_RELATIVE_PATH,
+    "LOCAL_REPO_RELATIVE_PATH is not set",
+  );
+  let localFilePath = path.join(env.LOCAL_REPO_RELATIVE_PATH, filepath);
+  let content = await fsp.readFile(localFilePath);
+  return content;
+}
+
