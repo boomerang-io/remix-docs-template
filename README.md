@@ -42,11 +42,13 @@ There is a file called \_redirects where you can put in paths for your documenta
 
 The content is pulled from a GitHub repository (or locally in development). The repository is expected to have markdown files and associated images. Images can be located relative or anywhere, as long as they are within the same 'pathToRepo' folder(s) as the markdown files.
 
+### Frontmatter
+
 The markdown files can contain frontmatter as follows
 
 ```jsx
 ---
-title: A wonderful title| <string>
+title: A wonderful title | <string>
 description: A detailed description | <string>
 order: 1 | <number>
 toc: true | false
@@ -56,6 +58,15 @@ tag: new | beta | <string>
 ```
 
 If the documentation is within a folder, add an index.md file to the folder including the `title` and `order` frontmatter. This will then be used in the navigation.
+
+| Key         | Type    | Purpose                                                                          | Required | Default |
+| ----------- | ------- | -------------------------------------------------------------------------------- | -------- | ------- |
+| title       | string  | Used for the left hand document navigation and html site meta and seo.           | yes      | -       |
+| description | string  | Used for the html site meta and seo.                                             | no       | -       |
+| order       | string  | Specify the order this doc should be shown within its category.                  | no       | -       |
+| toc         | boolean | Show or hide the table of contents.                                              | no       | true    |
+| hidden      | boolean | Show or hide the file in the left hand document navigation                       | no       | false   |
+| tag         | string  | A label to show next to the document title in the left hand document navigation. | no       | -       |
 
 ### Configuration
 
