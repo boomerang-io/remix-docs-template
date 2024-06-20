@@ -8,7 +8,7 @@ changelog:
       - duplicate
       - question
   categories:
-    - title: 🛠 Breaking Changes 
+    - title: 💥 Breaking Changes 
       labels:
         - breaking
     - title: 🎉 New Features
