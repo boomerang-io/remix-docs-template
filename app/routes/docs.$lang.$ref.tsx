@@ -33,6 +33,8 @@ import { siteConfig } from "~/config/site";
 import { docConfig } from "~/config/doc";
 import { Header } from "~/components/header";
 import { Badge } from "~/components/ui/badge";
+import { Button } from "~/components/ui/button";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "~/components/ui/accordion";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   let { lang = "en", ref = "main", "*": splat } = params;
@@ -257,7 +259,7 @@ function Menu() {
 
   return menu ? (
     <nav>
-      <ul>
+			<Accordion type="multiple" className="w-full">
         {menu.map((category) => {
           // Technically we can have a category that has content (and thus
           // needs it's own link) _and_ has children, so needs to be a details
@@ -269,15 +271,18 @@ function Menu() {
             : "details";
 
           return (
-            <li key={category.attrs.title} className="mb-3">
+						<AccordionItem
+							key={category.attrs.title}
+							value={category.attrs.title}
+							className="mb-3 border-none"
+						>
               {menuCategoryType === "link" ? (
                 <MenuSummary as="div">
-                  <MenuCategoryLink to={category.slug}>
-                    {category.attrs.title}
-                  </MenuCategoryLink>
+									<MenuCategoryLink to={category.slug}>{category.attrs.title}</MenuCategoryLink>
                 </MenuSummary>
               ) : (
                 <MenuCategoryDetails className="group" slug={category.slug}>
+									<AccordionTrigger className="py-0">
                   <MenuSummary>
                     {menuCategoryType === "linkAndDetails" ? (
                       <MenuCategoryLink to={category.slug}>
@@ -286,18 +291,11 @@ function Menu() {
                     ) : (
                       category.attrs.title
                     )}
-                    <svg aria-hidden className="h-5 w-5 group-open:hidden">
-                      <use href={`${iconsHref}#chevron-r`} />
-                    </svg>
-                    <svg
-                      aria-hidden
-                      className="hidden h-5 w-5 group-open:block"
-                    >
-                      <use href={`${iconsHref}#chevron-d`} />
-                    </svg>
                   </MenuSummary>
-                  {category.children.map((doc) => {
-                    return (
+									</AccordionTrigger>
+									<AccordionContent className="pl-4 pb-0">
+										<nav className="pl-1 border-l border-gray-200 dark:border-gray-700">
+											{category.children.map((doc) => (
                       <MenuLink key={doc.slug} to={doc.slug}>
                         {doc.attrs.title}{" "}
                         {doc.attrs.tag && (
@@ -306,14 +304,15 @@ function Menu() {
                           </Badge>
                         )}
                       </MenuLink>
-                    );
-                  })}
+											))}
+										</nav>
+									</AccordionContent>
                 </MenuCategoryDetails>
               )}
-            </li>
+						</AccordionItem>
           );
         })}
-      </ul>
+			</Accordion>
     </nav>
   ) : (
     <div className="bold text-gray-300">Failed to load menu</div>
@@ -326,39 +325,11 @@ type MenuCategoryDetailsType = {
   children: React.ReactNode;
 };
 
-function MenuCategoryDetails({
-  className,
-  slug,
-  children,
-}: MenuCategoryDetailsType) {
-  const isActivePath = useIsActivePath(slug);
-  // By default only the active path is open
-  const [isOpen, setIsOpen] = React.useState(isActivePath);
+function MenuCategoryDetails({ className, children }: MenuCategoryDetailsType) {
 
-  // Auto open the details element, useful when navigating from the home page
-  React.useEffect(() => {
-    if (isActivePath) {
-      setIsOpen(true);
-    }
-  }, [isActivePath]);
-
-  return (
-    <details
-      className={cx(className, "relative flex cursor-pointer flex-col")}
-      open={isOpen}
-      onToggle={(e) => {
-        // Synchronize the DOM's state with React state to prevent the
-        // details element from being closed after navigation and re-evaluation
-        // of useIsActivePath
-        setIsOpen(e.currentTarget.open);
-      }}
-    >
-      {children}
-    </details>
-  );
+	return <div className={cx(className, "relative flex cursor-pointer flex-col")}>{children}</div>;
 }
 
-// This components attempts to keep all of the styles as similar as possible
 function MenuSummary({
   children,
   as = "summary",
@@ -366,8 +337,7 @@ function MenuSummary({
   children: React.ReactNode;
   as?: "summary" | "div";
 }) {
-  const sharedClassName =
-    "rounded-2xl px-3 py-3 transition-colors duration-100";
+	const sharedClassName = "px-3 py-3  duration-100";
   const wrappedChildren = (
     <div className="flex h-5 w-full items-center justify-between text-base font-semibold leading-[1.125]">
       {children}
@@ -376,16 +346,14 @@ function MenuSummary({
 
   if (as === "summary") {
     return (
-      <summary
+			<div
         className={cx(
           sharedClassName,
-          "_no-triangle block select-none",
-          "outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-800  dark:focus-visible:ring-gray-100",
-          "hover:bg-gray-50 active:bg-gray-100 dark:border-gray-700 dark:bg-gray-900 dark:hover:bg-gray-800 dark:active:bg-gray-700"
+					"outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-800 dark:focus-visible:ring-gray-100",
         )}
       >
         {wrappedChildren}
-      </summary>
+			</div>
     );
   }
 
@@ -415,10 +383,8 @@ function MenuCategoryLink({
       prefetch="intent"
       to={to}
       className={cx(
-        "outline-none focus-visible:text-blue-brand dark:focus-visible:text-blue-400",
-        isActive
-          ? "text-blue-brand dark:text-blue-brand"
-          : "hover:text-blue-500"
+				"outline-none focus-visible:text-foreground my-1",
+				isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground",
       )}
     >
       {children}
@@ -427,20 +393,17 @@ function MenuCategoryLink({
 }
 
 function MenuLink({ to, children }: { to: string; children: React.ReactNode }) {
-  let isActive = useIsActivePath(to);
+	const isActive = useIsActivePath(to);
   return (
-    <Link
-      prefetch="intent"
-      to={to}
-      className={cx(
-        "group relative my-px flex min-h-[2.25rem] items-center justify-between rounded-md border-transparent px-3 py-2 text-sm",
-        "outline-none transition-colors duration-100 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-800  dark:focus-visible:ring-gray-100",
-        isActive
-          ? ["text-black", "bg-accent"]
-          : ["text-gray-700 hover:text-black", "hover:bg-accent"]
-      )}
-      children={children}
-    />
+		<Button
+			asChild
+			variant={isActive ? "secondary" : "ghost"}
+			className={cx("w-full justify-start my-1", isActive ? "bg-accent hover:bg-accent" : "")}
+		>
+			<Link prefetch="intent" to={to}>
+				{children}
+			</Link>
+		</Button>
   );
 }
 
