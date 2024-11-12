@@ -293,8 +293,8 @@ function Menu() {
                     )}
                   </MenuSummary>
 									</AccordionTrigger>
-									<AccordionContent className="pl-4 pb-0">
-										<nav className="pl-1 border-l border-gray-200 dark:border-gray-700">
+									<AccordionContent>
+										<nav>
 											{category.children.map((doc) => (
                       <MenuLink key={doc.slug} to={doc.slug}>
                         {doc.attrs.title}{" "}
