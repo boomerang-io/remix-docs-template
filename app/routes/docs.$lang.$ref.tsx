@@ -337,7 +337,7 @@ function MenuSummary({
   children: React.ReactNode;
   as?: "summary" | "div";
 }) {
-	const sharedClassName = "px-3 py-3  duration-100";
+	const sharedClassName = "py-3 duration-100";
   const wrappedChildren = (
     <div className="flex h-5 w-full items-center justify-between text-base font-semibold leading-[1.125]">
       {children}
@@ -379,16 +379,16 @@ function MenuCategoryLink({
   let isActive = useIsActivePath(to);
 
   return (
-    <Link
-      prefetch="intent"
-      to={to}
-      className={cx(
-				"outline-none focus-visible:text-foreground my-1",
-				isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground",
-      )}
-    >
-      {children}
-    </Link>
+      <Link
+        prefetch="intent"
+        to={to}
+        className={cx(
+          "outline-none focus-visible:text-foreground my-1",
+          isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground",
+        )}
+      >
+        {children}
+      </Link>
   );
 }
 
