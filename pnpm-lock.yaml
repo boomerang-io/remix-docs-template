@@ -24,8 +24,8 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0(@types/react-dom@18.3.1)(@types/react@18.3.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@radix-ui/react-slot':
-        specifier: ^1.0.2
-        version: 1.0.2(@types/react@18.3.2)(react@18.3.1)
+        specifier: ^1.1.0
+        version: 1.1.0(@types/react@18.3.2)(react@18.3.1)
       '@rehype-pretty/transformers':
         specifier: ^0.13.2
         version: 0.13.2
