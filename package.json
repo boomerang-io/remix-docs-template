@@ -25,7 +25,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "escape-goat": "^4.0.0",
-    "follow-redirects": "^1.15.6",
+    "follow-redirects": "^1.15.9",
     "front-matter": "^4.0.2",
     "gray-matter": "^4.0.3",
     "gunzip-maybe": "^1.4.2",
